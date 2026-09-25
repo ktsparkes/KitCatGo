@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 <meta name="theme-color" content="#ff8a5c">
-<title>Cat Collector</title>
+<title>KitCatGo</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
 <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
@@ -238,7 +238,7 @@ function catSVG(c, cls = '') {
 }
 
 // ---------- Save data ----------
-const SAVE_KEY = 'catCollector.v1';
+const SAVE_KEY = 'kitCatGo.v1';
 const MAX_YARN = 50, YARN_REGEN_MS = 60 * 1000;
 function load() {
   try { const s = JSON.parse(localStorage.getItem(SAVE_KEY)); if (s) return s; } catch (e) {}

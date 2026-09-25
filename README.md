@@ -1,4 +1,4 @@
-# 🐱 Cat Collector
+# 🐱 KitCatGo
 
 Catch cats around you, Pokémon Go style. One file: `index.html`.
 
