@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 <meta name="theme-color" content="#ff8a5c">
+<meta name="apple-mobile-web-app-capable" content="yes">
 <title>KitCatGo</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
 <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&display=swap" rel="stylesheet">
@@ -18,36 +19,56 @@
   }
   * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
   html, body { margin: 0; height: 100%; background: var(--bg); color: var(--ink);
-    font-family: 'Fredoka', system-ui, sans-serif; overflow: hidden; user-select: none; }
-  button { font-family: inherit; cursor: pointer; }
+    font-family: 'Fredoka', system-ui, sans-serif; overflow: hidden; }
+  button, input, textarea { font-family: inherit; font-size: 16px; }
+  button { cursor: pointer; }
 
   /* Top bar */
   #topbar { position: fixed; top: 0; left: 0; right: 0; z-index: 1000; display: flex; align-items: center;
-    gap: 10px; padding: calc(10px + env(safe-area-inset-top)) 16px 10px; pointer-events: none; }
-  .pill { pointer-events: auto; background: var(--card); border-radius: 999px; padding: 6px 12px;
-    box-shadow: 0 2px 10px rgba(0,0,0,.15); display: flex; align-items: center; gap: 8px; font-weight: 600; }
-  #lvl { flex: 1; max-width: 230px; }
+    gap: 10px; padding: calc(10px + env(safe-area-inset-top)) 16px 10px; background: var(--bg); }
+  #logo { font-weight: 700; font-size: 20px; color: var(--brand-dark); }
+  .pill { background: var(--card); border-radius: 999px; padding: 6px 12px;
+    box-shadow: 0 2px 10px rgba(0,0,0,.12); display: flex; align-items: center; gap: 8px; font-weight: 600; }
+  #lvl { flex: 1; max-width: 220px; margin-left: auto; }
   #lvlNum { background: var(--brand); color: #fff; border-radius: 999px; min-width: 28px; height: 28px;
     display: grid; place-items: center; font-size: 14px; }
   #xpbar { flex: 1; height: 8px; background: var(--line); border-radius: 99px; overflow: hidden; }
   #xpfill { height: 100%; width: 0; background: var(--brand); transition: width .4s; }
-  #yarnPill { margin-left: auto; }
 
   /* Views */
-  .view { position: fixed; inset: 0; bottom: calc(64px + env(safe-area-inset-bottom)); }
+  .view { position: fixed; left: 0; right: 0; top: calc(58px + env(safe-area-inset-top));
+    bottom: calc(64px + env(safe-area-inset-bottom)); overflow-y: auto; padding: 8px 16px 110px; display: none; }
+  .view.on { display: block; }
+  #mapView { padding: 0; }
   #map { position: absolute; inset: 0; background: #e8e0d8; }
-  #dexView { overflow-y: auto; padding: calc(64px + env(safe-area-inset-top)) 16px 24px; display: none; }
-  #dexView h2 { margin: 8px 0 4px; }
-  #dexView .sub { color: var(--muted); margin-bottom: 16px; }
-  #dexGrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(96px, 1fr)); gap: 10px; }
+  h2 { margin: 6px 0 2px; }
+  .sub { color: var(--muted); margin-bottom: 14px; }
+
+  /* Collection grid */
+  #grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; }
+  .photoCard { background: var(--card); border-radius: 16px; overflow: hidden; border: 2px solid var(--line); cursor: pointer; }
+  .photoCard img { width: 100%; aspect-ratio: 1; object-fit: cover; display: block; }
+  .photoCard .info { padding: 6px 10px 8px; }
+  .photoCard .nm { font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .photoCard small { color: var(--muted); }
+  #empty { text-align: center; padding: 40px 16px; color: var(--muted); }
+  #empty svg { width: 120px; height: 120px; }
+
+  /* Catdex */
+  #dexGrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 10px; }
   .dexCard { background: var(--card); border-radius: 16px; padding: 8px 6px 10px; text-align: center;
     border: 2px solid var(--line); position: relative; }
-  .dexCard svg { width: 64px; height: 64px; }
+  .dexCard svg { width: 60px; height: 60px; }
   .dexCard .nm { font-size: 13px; font-weight: 600; line-height: 1.1; }
-  .dexCard .no { position: absolute; top: 4px; left: 8px; font-size: 11px; color: var(--muted); }
-  .dexCard .ct { position: absolute; top: 4px; right: 8px; font-size: 11px; font-weight: 700; color: var(--brand-dark); }
-  .dexCard.unseen svg { filter: brightness(0) opacity(.25); }
+  .dexCard .ct { position: absolute; top: 4px; right: 8px; font-size: 12px; font-weight: 700; color: var(--brand-dark); }
+  .dexCard.unseen svg { filter: brightness(0) opacity(.2); }
   .dexCard.unseen .nm { color: var(--muted); }
+
+  /* Spot button */
+  #spotBtn { position: fixed; left: 50%; transform: translateX(-50%); bottom: calc(78px + env(safe-area-inset-bottom));
+    z-index: 1100; background: var(--brand); color: #fff; border: 0; border-radius: 999px; padding: 14px 26px;
+    font-size: 19px; font-weight: 700; box-shadow: 0 6px 20px rgba(229,103,58,.45); white-space: nowrap; }
+  #spotBtn:active { transform: translateX(-50%) scale(.96); }
 
   /* Bottom nav */
   #nav { position: fixed; bottom: 0; left: 0; right: 0; height: calc(64px + env(safe-area-inset-bottom));
@@ -55,88 +76,69 @@
     border-top: 1px solid var(--line); }
   #nav button { flex: 1; border: 0; background: none; color: var(--muted); font-size: 13px; font-weight: 600;
     display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; }
-  #nav button span { font-size: 24px; }
+  #nav button span { font-size: 22px; }
   #nav button.on { color: var(--brand-dark); }
 
-  /* Map controls */
-  #mapBtns { position: absolute; right: 16px; bottom: 16px; z-index: 900; display: flex; flex-direction: column; gap: 10px; }
-  .roundBtn { width: 48px; height: 48px; border-radius: 50%; border: 0; background: var(--card); color: var(--ink);
-    box-shadow: 0 2px 10px rgba(0,0,0,.2); font-size: 22px; }
-  .roundBtn.on { background: var(--brand); color: #fff; }
-  #toast { position: fixed; left: 50%; top: calc(70px + env(safe-area-inset-top)); transform: translateX(-50%);
-    z-index: 3000; background: var(--ink); color: var(--bg); padding: 10px 16px; border-radius: 12px; font-weight: 600;
-    opacity: 0; transition: opacity .3s; pointer-events: none; max-width: calc(100% - 32px); text-align: center; }
-  #toast.show { opacity: 1; }
+  /* Map pins */
+  .pin { width: 48px; height: 48px; border-radius: 50%; border: 3px solid #fff; background-size: cover;
+    background-position: center; box-shadow: 0 2px 8px rgba(0,0,0,.35); }
+  .me { width: 18px; height: 18px; border-radius: 50%; background: var(--brand); border: 3px solid #fff;
+    box-shadow: 0 0 0 6px rgba(255,138,92,.25); }
 
-  /* Map markers */
-  .catMarker { animation: bob 1.6s ease-in-out infinite; }
-  .catMarker .glow { position: absolute; inset: 6px; border-radius: 50%; filter: blur(8px); opacity: .7; }
-  .catMarker svg { position: relative; width: 52px; height: 52px; }
-  .catMarker.far { opacity: .55; }
-  @keyframes bob { 50% { transform: translateY(-6px); } }
-  .me { width: 22px; height: 22px; border-radius: 50%; background: var(--brand); border: 4px solid #fff;
-    box-shadow: 0 0 0 8px rgba(255,138,92,.25), 0 2px 6px rgba(0,0,0,.3); }
-
-  /* Catch screen */
-  #catch { position: fixed; inset: 0; z-index: 2000; display: none; flex-direction: column; align-items: center;
-    background: linear-gradient(#bfe6ff, #e9f7d8 60%, #9ed680 60%, #7cc05e); touch-action: none; }
-  #catch.open { display: flex; }
-  #catchTop { width: 100%; display: flex; justify-content: space-between; align-items: center;
-    padding: calc(12px + env(safe-area-inset-top)) 16px 0; color: #3b2a22; }
-  #catchName { font-size: 22px; font-weight: 700; text-align: center; }
-  #catchRarity { font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; text-align: center; }
-  #runBtn { background: rgba(255,255,255,.8); border: 0; border-radius: 999px; padding: 8px 14px; font-weight: 600; color: #3b2a22; }
-  #arena { position: relative; flex: 1; width: 100%; }
-  #target { position: absolute; left: 50%; top: 38%; transform: translate(-50%, -50%); width: 180px; height: 180px; }
-  #target svg { width: 100%; height: 100%; animation: idle 2s ease-in-out infinite; }
-  #target.dodge svg { animation: dodge .4s ease; }
-  #ring { position: absolute; left: 50%; top: 50%; border: 5px solid; border-radius: 50%; transform: translate(-50%, -50%);
-    pointer-events: none; }
-  #ringOuter { position: absolute; left: 50%; top: 50%; width: 220px; height: 220px; border: 3px solid rgba(255,255,255,.8);
-    border-radius: 50%; transform: translate(-50%, -50%); pointer-events: none; }
-  @keyframes idle { 50% { transform: translateY(-8px) scale(1.02); } }
-  @keyframes dodge { 30% { transform: translateX(-40px) rotate(-10deg); } 70% { transform: translateX(30px) rotate(8deg); } }
-  #ball { position: absolute; left: 50%; bottom: 60px; width: 76px; height: 76px; margin-left: -38px; font-size: 64px;
-    line-height: 76px; text-align: center; transition: none; }
-  #hint { position: absolute; bottom: 20px; width: 100%; text-align: center; color: #2d4a1f; font-weight: 600; }
-  #yarnLeft { font-weight: 700; }
-  #result { position: absolute; inset: 0; display: none; flex-direction: column; align-items: center; justify-content: center;
-    background: rgba(0,0,0,.45); color: #fff; text-align: center; padding: 24px; }
-  #result.show { display: flex; }
-  #result .big { font-size: 34px; font-weight: 700; }
-  #result .card { background: var(--card); color: var(--ink); border-radius: 24px; padding: 20px; width: 100%; max-width: 320px; margin-top: 12px; }
-  #result .card svg { width: 120px; height: 120px; }
-  .btn { background: var(--brand); color: #fff; border: 0; border-radius: 999px; padding: 12px 24px; font-size: 17px;
-    font-weight: 700; margin-top: 16px; }
-  .wobble { animation: wobble .5s ease; }
-  @keyframes wobble { 25% { transform: rotate(-20deg); } 75% { transform: rotate(20deg); } }
-
-  /* Modal */
-  #modal { position: fixed; inset: 0; z-index: 2500; background: rgba(0,0,0,.5); display: none; align-items: flex-end; justify-content: center; }
-  #modal.open { display: flex; }
-  #modalBox { background: var(--card); width: 100%; max-width: 480px; max-height: 85vh; overflow-y: auto; border-radius: 24px 24px 0 0;
-    padding: 20px 16px calc(20px + env(safe-area-inset-bottom)); text-align: center; }
-  #modalBox svg.hero { width: 130px; height: 130px; }
+  /* Sheets / modals */
+  .sheet { position: fixed; inset: 0; z-index: 2000; background: rgba(0,0,0,.5); display: none;
+    align-items: flex-end; justify-content: center; }
+  .sheet.open { display: flex; }
+  .sheetBox { background: var(--card); width: 100%; max-width: 480px; max-height: 92vh; overflow-y: auto;
+    border-radius: 24px 24px 0 0; padding: 16px 16px calc(20px + env(safe-area-inset-bottom)); }
+  .sheetBox img.big { width: 100%; max-height: 45vh; object-fit: cover; border-radius: 16px; display: block; }
+  label.lbl { display: block; font-weight: 700; margin: 14px 0 6px; }
+  .field { width: 100%; padding: 12px; border-radius: 12px; border: 2px solid var(--line); background: var(--bg); color: var(--ink); }
+  .row { display: flex; gap: 8px; align-items: center; }
+  .chips { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
+  .chip { background: var(--bg); border: 2px solid var(--line); border-radius: 12px; padding: 4px 2px 6px;
+    text-align: center; font-size: 11px; font-weight: 600; color: var(--ink); }
+  .chip svg { width: 38px; height: 38px; display: block; margin: 0 auto; }
+  .chip.on { border-color: var(--brand); background: rgba(255,138,92,.15); }
+  .btn { background: var(--brand); color: #fff; border: 0; border-radius: 999px; padding: 13px 24px;
+    font-size: 17px; font-weight: 700; width: 100%; margin-top: 16px; }
+  .btn.ghost { background: var(--bg); color: var(--ink); border: 2px solid var(--line); }
+  .btn.danger { background: none; color: #d64545; margin-top: 8px; }
+  .smallBtn { border: 0; background: var(--line); color: var(--ink); border-radius: 10px; padding: 12px; white-space: nowrap; }
   .tag { display: inline-block; padding: 3px 10px; border-radius: 999px; color: #fff; font-size: 12px; font-weight: 700;
     text-transform: uppercase; letter-spacing: .06em; }
-  .myCat { display: flex; justify-content: space-between; padding: 10px 4px; border-top: 1px solid var(--line); text-align: left; }
-  .myCat small { color: var(--muted); }
+  .meta { color: var(--muted); margin: 4px 0; }
+
+  /* Celebration */
+  #yay { position: fixed; inset: 0; z-index: 3000; background: rgba(0,0,0,.6); display: none; flex-direction: column;
+    align-items: center; justify-content: center; color: #fff; text-align: center; padding: 24px; }
+  #yay.open { display: flex; }
+  #yay .big { font-size: 38px; font-weight: 700; animation: pop .5s ease; }
+  #yay img { width: 200px; height: 200px; object-fit: cover; border-radius: 50%; border: 6px solid #fff; margin: 16px 0; animation: pop .5s ease; }
+  #yay .btn { max-width: 260px; }
+  @keyframes pop { 0% { transform: scale(.3); opacity: 0; } 70% { transform: scale(1.1); } 100% { transform: scale(1); opacity: 1; } }
+
+  #toast { position: fixed; left: 50%; top: calc(70px + env(safe-area-inset-top)); transform: translateX(-50%);
+    z-index: 4000; background: var(--ink); color: var(--bg); padding: 10px 16px; border-radius: 12px; font-weight: 600;
+    opacity: 0; transition: opacity .3s; pointer-events: none; max-width: calc(100% - 32px); text-align: center; }
+  #toast.show { opacity: 1; }
 </style>
 </head>
 <body>
 
 <div id="topbar">
+  <div id="logo">🐱 KitCatGo</div>
   <div class="pill" id="lvl"><div id="lvlNum">1</div><div id="xpbar"><div id="xpfill"></div></div></div>
-  <div class="pill" id="yarnPill">🧶 <span id="yarnCount">0</span></div>
 </div>
 
-<div class="view" id="mapView">
-  <div id="map"></div>
-  <div id="mapBtns">
-    <button class="roundBtn" id="walkBtn" title="Walk mode: tap the map to move">👣</button>
-    <button class="roundBtn" id="centerBtn" title="Centre on me">📍</button>
-  </div>
+<div class="view on" id="colView">
+  <h2>My Cats</h2>
+  <div class="sub" id="colSub"></div>
+  <div id="grid"></div>
+  <div id="empty"></div>
 </div>
+
+<div class="view" id="mapView"><div id="map"></div></div>
 
 <div class="view" id="dexView">
   <h2>Catdex</h2>
@@ -144,74 +146,65 @@
   <div id="dexGrid"></div>
 </div>
 
+<button id="spotBtn">📷 Spot a cat!</button>
+<input type="file" id="camera" accept="image/*" capture="environment" hidden>
+
 <nav id="nav">
-  <button id="tabMap" class="on"><span>🗺️</span>Map</button>
-  <button id="tabDex"><span>📖</span>Catdex</button>
+  <button data-tab="col" class="on"><span>🖼️</span>My Cats</button>
+  <button data-tab="map"><span>🗺️</span>Map</button>
+  <button data-tab="dex"><span>📖</span>Catdex</button>
 </nav>
 
-<div id="catch">
-  <div id="catchTop">
-    <button id="runBtn">🏃 Run</button>
-    <div><div id="catchName"></div><div id="catchRarity"></div></div>
-    <div class="pill">🧶 <span id="yarnLeft"></span></div>
+<!-- Add cat sheet -->
+<div class="sheet" id="addSheet"><div class="sheetBox">
+  <img class="big" id="addImg" alt="">
+  <label class="lbl" for="addName">Name</label>
+  <div class="row">
+    <input class="field" id="addName" placeholder="What's this cat called?" maxlength="40">
+    <button class="smallBtn" id="dice" title="Random name">🎲</button>
   </div>
-  <div id="arena">
-    <div id="target"><div id="ringOuter"></div><div id="ring"></div><div id="targetArt"></div></div>
-    <div id="ball">🧶</div>
-    <div id="hint">Swipe the yarn up at the cat! Throw when the ring is small for a bonus.</div>
-    <div id="result"></div>
-  </div>
-</div>
+  <label class="lbl">Coat type</label>
+  <div class="chips" id="coatChips"></div>
+  <label class="lbl" for="addNote">Notes</label>
+  <textarea class="field" id="addNote" rows="2" placeholder="Where was it? Was it friendly?"></textarea>
+  <div class="meta" id="addLoc">📍 Getting location…</div>
+  <button class="btn" id="saveBtn">Add to collection ✨</button>
+  <button class="btn ghost" id="cancelBtn">Cancel</button>
+</div></div>
 
-<div id="modal"><div id="modalBox"></div></div>
+<!-- Cat detail sheet -->
+<div class="sheet" id="detailSheet"><div class="sheetBox" id="detailBox"></div></div>
+
+<div id="yay"></div>
 <div id="toast"></div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
 <script>
-// ---------- Cat data ----------
+// ---------- Coat types (the Catdex) ----------
 const RARITY = {
-  common:    { w: 50, catch: .80, flee: .08, xp: 100,  color: 'var(--common)' },
-  uncommon:  { w: 28, catch: .60, flee: .12, xp: 200,  color: 'var(--uncommon)' },
-  rare:      { w: 14, catch: .45, flee: .18, xp: 400,  color: 'var(--rare)' },
-  epic:      { w: 6,  catch: .30, flee: .24, xp: 800,  color: 'var(--epic)' },
-  legendary: { w: 2,  catch: .15, flee: .30, xp: 1600, color: 'var(--legendary)' },
+  common: 'var(--common)', uncommon: 'var(--uncommon)', rare: 'var(--rare)', epic: 'var(--epic)', legendary: 'var(--legendary)'
 };
-// pattern: plain | tabby | patches | points | tuxedo | spots
-const CATS = [
-  { name: 'Ginger Tabby',   r: 'common',    fur: '#f4a259', acc: '#c9702c', pat: 'tabby',   eye: '#7cb342', fact: 'About 80% of ginger cats are boys!' },
-  { name: 'Tuxedo',         r: 'common',    fur: '#2b2b2b', acc: '#ffffff', pat: 'tuxedo',  eye: '#fdd835', fact: 'Always dressed for a fancy dinner.' },
-  { name: 'Grey Tabby',     r: 'common',    fur: '#9e9e9e', acc: '#616161', pat: 'tabby',   eye: '#fbc02d', fact: 'Tabby cats have an "M" marking on their forehead.' },
-  { name: 'Black Cat',      r: 'common',    fur: '#232323', acc: '#232323', pat: 'plain',   eye: '#ffca28', fact: 'Lucky in the UK and Japan!' },
-  { name: 'Calico',         r: 'common',    fur: '#fafafa', acc: '#e07b39', pat: 'patches', eye: '#8bc34a', fact: 'Almost all calicos are girls.' },
-  { name: 'Brown Tabby',    r: 'common',    fur: '#a47148', acc: '#5d3a1a', pat: 'tabby',   eye: '#aed581', fact: 'The classic street-cat look.' },
-  { name: 'Snowball',       r: 'uncommon',  fur: '#ffffff', acc: '#eeeeee', pat: 'plain',   eye: '#42a5f5', fact: 'White cats with blue eyes are often deaf.' },
-  { name: 'British Shorthair', r: 'uncommon', fur: '#8d9db6', acc: '#6f7f98', pat: 'plain', eye: '#ff9800', fact: 'The original Cheshire Cat inspiration.' },
-  { name: 'Tortoiseshell',  r: 'uncommon',  fur: '#3e2723', acc: '#d9822b', pat: 'spots',   eye: '#ffb300', fact: 'Tortie cats are known for "tortitude".' },
-  { name: 'Siamese',        r: 'uncommon',  fur: '#f3e5d0', acc: '#5d4037', pat: 'points',  eye: '#29b6f6', fact: 'Siamese cats are very chatty.' },
-  { name: 'Russian Blue',   r: 'uncommon',  fur: '#7b8fa6', acc: '#6a7d93', pat: 'plain',   eye: '#43a047', fact: 'Their coat seems to shimmer silver.' },
-  { name: 'Maine Coon',     r: 'rare',      fur: '#8d6e63', acc: '#4e342e', pat: 'tabby',   eye: '#c0ca33', fact: 'One of the biggest pet cat breeds.' },
-  { name: 'Bengal',         r: 'rare',      fur: '#e6b35c', acc: '#5d3a1a', pat: 'spots',   eye: '#9ccc65', fact: 'Bengals often love water!' },
-  { name: 'Ragdoll',        r: 'rare',      fur: '#f5efe6', acc: '#8d7b6a', pat: 'points',  eye: '#1e88e5', fact: 'They go floppy when you pick them up.' },
-  { name: 'Scottish Fold',  r: 'rare',      fur: '#cfd8dc', acc: '#90a4ae', pat: 'tabby',   eye: '#ffa726', fact: 'Famous for their folded ears.', fold: true },
-  { name: 'Sphynx',         r: 'epic',      fur: '#f2c7b8', acc: '#e0a898', pat: 'plain',   eye: '#66bb6a', fact: 'Hairless and always looking for a warm lap.', big: true },
-  { name: 'Lilac Persian',  r: 'epic',      fur: '#d8c3e0', acc: '#b39bc2', pat: 'plain',   eye: '#ff7043', fact: 'Very fluffy, very fancy.' },
-  { name: 'Snow Leopard',   r: 'epic',      fur: '#eceff1', acc: '#546e7a', pat: 'spots',   eye: '#80deea', fact: 'Technically a big cat. Technically.' },
-  { name: 'Galaxy Cat',     r: 'legendary', fur: '#3a1c71', acc: '#f5d0ff', pat: 'spots',   eye: '#ffe082', fact: 'Seen only on clear, starry nights.' },
-  { name: 'Golden Lucky Cat', r: 'legendary', fur: '#ffd54f', acc: '#e53935', pat: 'plain', eye: '#3e2723', fact: 'Maneki-neko brings good fortune!', bell: true },
+const COATS = [
+  { id: 'ginger',   name: 'Ginger',        r: 'common',    fur: '#f4a259', acc: '#c9702c', pat: 'tabby',   eye: '#7cb342' },
+  { id: 'black',    name: 'Black',         r: 'common',    fur: '#232323', acc: '#232323', pat: 'plain',   eye: '#ffca28' },
+  { id: 'tabby',    name: 'Tabby',         r: 'common',    fur: '#a47148', acc: '#5d3a1a', pat: 'tabby',   eye: '#aed581' },
+  { id: 'grey',     name: 'Grey',          r: 'common',    fur: '#9e9e9e', acc: '#757575', pat: 'plain',   eye: '#fbc02d' },
+  { id: 'tuxedo',   name: 'Tuxedo',        r: 'common',    fur: '#2b2b2b', acc: '#ffffff', pat: 'tuxedo',  eye: '#fdd835' },
+  { id: 'white',    name: 'White',         r: 'uncommon',  fur: '#ffffff', acc: '#e0e0e0', pat: 'plain',   eye: '#42a5f5' },
+  { id: 'calico',   name: 'Calico',        r: 'uncommon',  fur: '#fafafa', acc: '#e07b39', pat: 'patches', eye: '#8bc34a' },
+  { id: 'tortie',   name: 'Tortoiseshell', r: 'uncommon',  fur: '#3e2723', acc: '#d9822b', pat: 'spots',   eye: '#ffb300' },
+  { id: 'point',    name: 'Siamese-y',     r: 'rare',      fur: '#f3e5d0', acc: '#5d4037', pat: 'points',  eye: '#29b6f6' },
+  { id: 'fluffy',   name: 'Super Fluffy',  r: 'rare',      fur: '#d7ccc8', acc: '#a1887f', pat: 'fluff',   eye: '#ff9800' },
+  { id: 'spotty',   name: 'Spotty',        r: 'epic',      fur: '#e6b35c', acc: '#5d3a1a', pat: 'spots',   eye: '#9ccc65' },
+  { id: 'mystery',  name: 'Mystery',       r: 'legendary', fur: '#3a1c71', acc: '#f5d0ff', pat: 'spots',   eye: '#ffe082' },
 ];
-CATS.forEach((c, i) => c.id = i);
-
+const coatById = id => COATS.find(c => c.id === id) || COATS[COATS.length - 1];
 const NAMES = ['Mochi','Biscuit','Luna','Pickle','Noodle','Pumpkin','Waffles','Tofu','Muffin','Ziggy','Pepper','Olive',
-  'Beans','Nacho','Bramble','Sprout','Maple','Toast','Pip','Clementine','Socks','Marmalade','Sushi','Button','Dumpling'];
+  'Beans','Nacho','Bramble','Sprout','Maple','Toast','Pip','Clementine','Socks','Marmalade','Sushi','Button','Dumpling',
+  'Sir Fluffington','Captain Whiskers','Duchess','Meatball','Crumpet','Pudding','Gizmo','Smudge','Tigger','Bagel'];
 
-// ---------- Cat art (SVG) ----------
 function catSVG(c, cls = '') {
   const f = c.fur, a = c.acc;
-  const ears = c.fold
-    ? `<path d="M22 34 Q24 20 38 26 Z" fill="${f}"/><path d="M78 34 Q76 20 62 26 Z" fill="${f}"/>`
-    : `<path d="M18 42 L24 8 L46 28 Z" fill="${f}" stroke="${a}" stroke-width="1.5"/>
-       <path d="M82 42 L76 8 L54 28 Z" fill="${f}" stroke="${a}" stroke-width="1.5"/>
-       <path d="M24 34 L27 16 L39 28 Z" fill="#f8a5b3"/><path d="M76 34 L73 16 L61 28 Z" fill="#f8a5b3"/>`;
   let pat = '';
   if (c.pat === 'tabby') pat = `<path d="M42 26 L44 38 M50 24 L50 38 M58 26 L56 38" stroke="${a}" stroke-width="3.5" stroke-linecap="round"/>
       <path d="M14 56 L26 58 M14 66 L26 64 M86 56 L74 58 M86 66 L74 64" stroke="${a}" stroke-width="3" stroke-linecap="round"/>`;
@@ -220,54 +213,62 @@ function catSVG(c, cls = '') {
       .map(([x,y,r]) => `<circle cx="${x}" cy="${y}" r="${r}" fill="${a}"/>`).join('');
   if (c.pat === 'points') pat = `<ellipse cx="50" cy="68" rx="22" ry="17" fill="${a}" opacity=".85"/>`;
   if (c.pat === 'tuxedo') pat = `<path d="M50 44 Q34 56 34 74 Q50 90 66 74 Q66 56 50 44 Z" fill="${a}"/>`;
-  const muzzleDark = c.pat === 'tuxedo' || c.fur === '#232323';
-  const bell = c.bell ? `<circle cx="50" cy="95" r="5" fill="#ffca28" stroke="#b8860b"/>` : '';
+  const fluff = c.pat === 'fluff'
+    ? `<path d="M12 60 Q4 70 14 78 Q10 90 26 90 Q36 98 50 94 Q64 98 74 90 Q90 90 86 78 Q96 70 88 60 Z" fill="${a}"/>` : '';
+  const dark = c.pat === 'tuxedo' || c.fur === '#232323';
   return `<svg class="${cls}" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-    ${ears}
+    <path d="M18 42 L24 8 L46 28 Z" fill="${f}" stroke="${a}" stroke-width="1.5"/>
+    <path d="M82 42 L76 8 L54 28 Z" fill="${f}" stroke="${a}" stroke-width="1.5"/>
+    <path d="M24 34 L27 16 L39 28 Z" fill="#f8a5b3"/><path d="M76 34 L73 16 L61 28 Z" fill="#f8a5b3"/>
+    ${fluff}
     <ellipse cx="50" cy="58" rx="38" ry="34" fill="${f}" stroke="${a}" stroke-width="1.5"/>
     ${pat}
     <ellipse cx="36" cy="54" rx="7" ry="8" fill="${c.eye}"/><ellipse cx="64" cy="54" rx="7" ry="8" fill="${c.eye}"/>
     <ellipse cx="36" cy="55" rx="2.5" ry="6" fill="#111"/><ellipse cx="64" cy="55" rx="2.5" ry="6" fill="#111"/>
     <circle cx="38" cy="51" r="1.8" fill="#fff"/><circle cx="66" cy="51" r="1.8" fill="#fff"/>
     <path d="M46 66 L54 66 L50 71 Z" fill="#f48fb1"/>
-    <path d="M50 71 Q46 77 41 74 M50 71 Q54 77 59 74" stroke="${muzzleDark ? '#bbb' : '#5d4037'}" stroke-width="1.8" fill="none" stroke-linecap="round"/>
-    <path d="M30 68 L8 64 M30 72 L9 75 M70 68 L92 64 M70 72 L91 75" stroke="${muzzleDark ? '#ccc' : '#6d5a50'}" stroke-width="1" opacity=".7"/>
-    ${c.pat === 'spots' && c.r === 'legendary' ? '<text x="70" y="30" font-size="12">✨</text>' : ''}
-    ${bell}
+    <path d="M50 71 Q46 77 41 74 M50 71 Q54 77 59 74" stroke="${dark ? '#bbb' : '#5d4037'}" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+    <path d="M30 68 L8 64 M30 72 L9 75 M70 68 L92 64 M70 72 L91 75" stroke="${dark ? '#ccc' : '#6d5a50'}" stroke-width="1" opacity=".7"/>
+    ${c.id === 'mystery' ? '<text x="70" y="30" font-size="12">✨</text>' : ''}
   </svg>`;
 }
+const esc = s => String(s ?? '').replace(/[&<>"']/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch]));
 
-// ---------- Save data ----------
-const SAVE_KEY = 'kitCatGo.v1';
-const MAX_YARN = 50, YARN_REGEN_MS = 60 * 1000;
-function load() {
-  try { const s = JSON.parse(localStorage.getItem(SAVE_KEY)); if (s) return s; } catch (e) {}
-  return { xp: 0, yarn: 30, yarnAt: Date.now(), cats: [] };
+// ---------- Storage (IndexedDB keeps photos on this device) ----------
+let db, cats = [];
+function openDB() {
+  return new Promise((res, rej) => {
+    const req = indexedDB.open('kitcatgo', 1);
+    req.onupgradeneeded = () => req.result.createObjectStore('cats', { keyPath: 'id' });
+    req.onsuccess = () => { db = req.result; res(); };
+    req.onerror = () => rej(req.error);
+  });
 }
-let S = load();
-function save() { try { localStorage.setItem(SAVE_KEY, JSON.stringify(S)); } catch (e) {} }
+function tx(mode, fn) {
+  return new Promise((res, rej) => {
+    const t = db.transaction('cats', mode), store = t.objectStore('cats');
+    const r = fn(store);
+    t.oncomplete = () => res(r && r.result);
+    t.onerror = () => rej(t.error);
+  });
+}
+const loadAll = () => tx('readonly', s => s.getAll());
+const putCat = c => tx('readwrite', s => s.put(c));
+const delCat = id => tx('readwrite', s => s.delete(id));
 
-function regenYarn() {
-  const gained = Math.floor((Date.now() - S.yarnAt) / YARN_REGEN_MS);
-  if (gained > 0) {
-    S.yarn = Math.min(MAX_YARN, S.yarn + gained);
-    S.yarnAt += gained * YARN_REGEN_MS;
-    if (S.yarn >= MAX_YARN) S.yarnAt = Date.now();
-    save();
-  }
-}
+// ---------- XP & levels ----------
+const XP_NEW_CAT = 100, XP_NEW_COAT = 300, XP_SEEN_AGAIN = 25;
 const levelOf = xp => Math.floor(Math.sqrt(xp / 250)) + 1;
 const xpFor = lvl => (lvl - 1) ** 2 * 250;
-
-function renderHUD() {
-  regenYarn();
-  const lvl = levelOf(S.xp), lo = xpFor(lvl), hi = xpFor(lvl + 1);
-  document.getElementById('lvlNum').textContent = lvl;
-  document.getElementById('xpfill').style.width = ((S.xp - lo) / (hi - lo) * 100) + '%';
-  document.getElementById('yarnCount').textContent = S.yarn;
-  document.getElementById('yarnLeft').textContent = S.yarn;
+function totalXP() {
+  const coats = new Set(cats.map(c => c.coat));
+  return cats.reduce((s, c) => s + XP_NEW_CAT + (c.seen - 1) * XP_SEEN_AGAIN, 0) + coats.size * XP_NEW_COAT;
 }
-setInterval(renderHUD, 10000);
+function renderHUD() {
+  const xp = totalXP(), lvl = levelOf(xp), lo = xpFor(lvl), hi = xpFor(lvl + 1);
+  document.getElementById('lvlNum').textContent = lvl;
+  document.getElementById('xpfill').style.width = ((xp - lo) / (hi - lo) * 100) + '%';
+}
 
 function toast(msg, ms = 2500) {
   const t = document.getElementById('toast');
@@ -275,262 +276,198 @@ function toast(msg, ms = 2500) {
   clearTimeout(toast.t); toast.t = setTimeout(() => t.classList.remove('show'), ms);
 }
 
-// ---------- Map & spawns ----------
-const CATCH_RANGE = 70;      // metres
-const SPAWN_COUNT = 8;
-const SPAWN_LIFE = 10 * 60 * 1000;
-const map = L.map('map', { zoomControl: false, attributionControl: true }).setView([51.5074, -0.1278], 17);
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-  maxZoom: 19, attribution: '&copy; OpenStreetMap'
-}).addTo(map);
-
-let me = null, meMarker = null, rangeCircle = null, walkMode = false, followMe = true;
-let spawns = [];
-
-function pickCat() {
-  const total = Object.values(RARITY).reduce((s, r) => s + r.w, 0);
-  let n = Math.random() * total, rarity;
-  for (const [k, r] of Object.entries(RARITY)) { if ((n -= r.w) < 0) { rarity = k; break; } }
-  const pool = CATS.filter(c => c.r === rarity);
-  return pool[Math.floor(Math.random() * pool.length)];
-}
-function offset(lat, lng, dist, bearing) {
-  const R = 6378137, dLat = dist * Math.cos(bearing) / R, dLng = dist * Math.sin(bearing) / (R * Math.cos(lat * Math.PI / 180));
-  return [lat + dLat * 180 / Math.PI, lng + dLng * 180 / Math.PI];
-}
-function catIcon(cat, far) {
-  return L.divIcon({
-    className: '', iconSize: [52, 52], iconAnchor: [26, 40],
-    html: `<div class="catMarker ${far ? 'far' : ''}"><div class="glow" style="background:${RARITY[cat.r].color}"></div>${catSVG(cat)}</div>`
-  });
-}
-function refreshSpawns() {
-  if (!me) return;
-  const now = Date.now();
-  spawns = spawns.filter(s => {
-    const keep = s.expires > now && map.distance(me, s.pos) < 400;
-    if (!keep) map.removeLayer(s.marker);
-    return keep;
-  });
-  while (spawns.length < SPAWN_COUNT) {
-    const cat = pickCat();
-    const pos = offset(me[0], me[1], 30 + Math.random() * 220, Math.random() * Math.PI * 2);
-    const s = { cat, pos, expires: now + SPAWN_LIFE * (0.5 + Math.random()) };
-    s.marker = L.marker(pos, { icon: catIcon(cat, true) }).addTo(map).on('click', () => tryCatch(s));
-    spawns.push(s);
-  }
-  spawns.forEach(s => {
-    const far = map.distance(me, s.pos) > CATCH_RANGE;
-    if (far !== s.far) { s.far = far; s.marker.setIcon(catIcon(s.cat, far)); }
-  });
-}
-setInterval(refreshSpawns, 15000);
-
-function setMe(lat, lng) {
-  me = [lat, lng];
-  if (!meMarker) {
-    meMarker = L.marker(me, { icon: L.divIcon({ className: '', html: '<div class="me"></div>', iconSize: [22, 22], iconAnchor: [11, 11] }), interactive: false }).addTo(map);
-    rangeCircle = L.circle(me, { radius: CATCH_RANGE, color: '#ff8a5c', weight: 1, fillOpacity: .08, interactive: false }).addTo(map);
-    map.setView(me, 17);
-  } else {
-    meMarker.setLatLng(me); rangeCircle.setLatLng(me);
-    if (followMe) map.panTo(me);
-  }
-  refreshSpawns();
-}
-
-function tryCatch(s) {
-  if (!me) return;
-  const d = Math.round(map.distance(me, s.pos));
-  if (d > CATCH_RANGE) { toast(`${s.cat.name} is ${d}m away. Get closer! 🐾`); return; }
-  openCatch(s);
-}
-
-map.on('click', e => { if (walkMode) { followMe = false; setMe(e.latlng.lat, e.latlng.lng); } });
-map.on('dragstart', () => followMe = false);
-document.getElementById('centerBtn').onclick = () => { followMe = true; if (me) map.setView(me, 17); };
-const walkBtn = document.getElementById('walkBtn');
-function setWalk(on) {
-  walkMode = on; walkBtn.classList.toggle('on', on);
-  if (on) { stopGPS(); toast('Walk mode on: tap the map to move 👣'); }
-  else { startGPS(); toast('Using your real location 📍'); }
-}
-walkBtn.onclick = () => setWalk(!walkMode);
-
-let gpsWatch = null;
-function startGPS() {
-  if (!navigator.geolocation) { noGPS(); return; }
-  gpsWatch = navigator.geolocation.watchPosition(
-    p => { if (!walkMode) setMe(p.coords.latitude, p.coords.longitude); },
-    () => noGPS(),
-    { enableHighAccuracy: true, maximumAge: 5000, timeout: 20000 }
-  );
-}
-function stopGPS() { if (gpsWatch !== null) navigator.geolocation.clearWatch(gpsWatch); gpsWatch = null; }
-function noGPS() {
-  if (walkMode) return;
-  walkMode = true; walkBtn.classList.add('on'); stopGPS();
-  if (!me) setMe(51.5074, -0.1278);
-  toast("Couldn't get your location, so Walk mode is on. Tap the map to move!", 4000);
-}
-
-// ---------- Catch screen ----------
-const catchEl = document.getElementById('catch'), ball = document.getElementById('ball'),
-      ring = document.getElementById('ring'), target = document.getElementById('target'),
-      result = document.getElementById('result');
-let cur = null, ringT = 0, ringRAF = null, busy = false;
-
-function openCatch(s) {
-  cur = s; busy = false;
-  document.getElementById('catchName').textContent = s.cat.name;
-  const rr = document.getElementById('catchRarity');
-  rr.textContent = s.cat.r; rr.style.color = RARITY[s.cat.r].color;
-  document.getElementById('targetArt').innerHTML = catSVG(s.cat);
-  ring.style.borderColor = RARITY[s.cat.r].color;
-  result.classList.remove('show');
-  resetBall();
-  renderHUD();
-  catchEl.classList.add('open');
-  const loop = () => {
-    ringT = (ringT + 0.012) % 1;
-    const size = 220 - ringT * 170;
-    ring.style.width = ring.style.height = size + 'px';
-    ringRAF = requestAnimationFrame(loop);
-  };
-  cancelAnimationFrame(ringRAF); loop();
-}
-function closeCatch() { catchEl.classList.remove('open'); cancelAnimationFrame(ringRAF); cur = null; }
-document.getElementById('runBtn').onclick = closeCatch;
-
-function resetBall() {
-  ball.style.transition = 'none';
-  ball.style.transform = 'none';
-  ball.style.opacity = S.yarn > 0 ? 1 : .3;
-  ball.classList.remove('wobble');
-}
-
-// swipe to throw
-let start = null;
-ball.addEventListener('pointerdown', e => { if (!busy) start = { x: e.clientX, y: e.clientY, t: Date.now() }; });
-window.addEventListener('pointerup', e => {
-  if (!start || !cur) return;
-  const dy = start.y - e.clientY, dx = e.clientX - start.x, dt = Date.now() - start.t;
-  start = null;
-  if (dy < 40 || dt > 900) return;
-  if (S.yarn <= 0) { toast('Out of yarn! It comes back 1 every minute 🧶'); return; }
-  throwBall(dx / dy);
-});
-
-function throwBall(curve) {
-  busy = true;
-  S.yarn--; S.yarnAt = S.yarn >= MAX_YARN - 1 ? Date.now() : S.yarnAt; save(); renderHUD();
-  const ringSize = 220 - ringT * 170;               // 50..220
-  const bonus = 1 + (1 - (ringSize - 50) / 170) * 0.5; // up to +50%
-  const accurate = Math.abs(curve) < 0.35;
-  const aRect = document.getElementById('arena').getBoundingClientRect();
-  const tRect = target.getBoundingClientRect(), bRect = ball.getBoundingClientRect();
-  const tx = (tRect.left + tRect.width / 2) - (bRect.left + bRect.width / 2) + (accurate ? 0 : curve * 120);
-  const ty = (tRect.top + tRect.height / 2) - (bRect.top + bRect.height / 2);
-  ball.style.transition = 'transform .6s cubic-bezier(.3,.6,.4,1)';
-  ball.style.transform = `translate(${tx}px, ${ty}px) scale(.55) rotate(540deg)`;
-
-  setTimeout(() => {
-    if (!accurate) { toast('Missed! Aim straight up 🎯'); busy = false; resetBall(); return; }
-    const chance = Math.min(0.97, RARITY[cur.cat.r].catch * bonus);
-    const caught = Math.random() < chance;
-    if (ringSize < 100) toast(ringSize < 70 ? 'Purrfect throw! ⭐' : 'Great throw!');
-    target.style.visibility = 'hidden';
-    const wobbles = caught ? 3 : 1 + Math.floor(Math.random() * 2);
-    let w = 0;
-    const doWobble = () => {
-      ball.classList.remove('wobble'); void ball.offsetWidth; ball.classList.add('wobble');
-      if (++w < wobbles) setTimeout(doWobble, 700);
-      else setTimeout(() => finish(caught), 700);
+// ---------- Photo capture ----------
+const camera = document.getElementById('camera');
+let draft = null;
+document.getElementById('spotBtn').onclick = () => { camera.value = ''; camera.click(); };
+camera.onchange = async () => {
+  const file = camera.files[0]; if (!file) return;
+  try {
+    const photo = await shrink(file, 1080, 0.82);
+    const thumb = await shrink(file, 240, 0.75);
+    openAdd(photo, thumb);
+  } catch (e) { toast("Couldn't read that photo 😿"); }
+};
+function shrink(file, max, q) {
+  return new Promise((res, rej) => {
+    const img = new Image(), url = URL.createObjectURL(file);
+    img.onload = () => {
+      const k = Math.min(1, max / Math.max(img.width, img.height));
+      const cv = document.createElement('canvas');
+      cv.width = Math.round(img.width * k); cv.height = Math.round(img.height * k);
+      cv.getContext('2d').drawImage(img, 0, 0, cv.width, cv.height);
+      URL.revokeObjectURL(url);
+      res(cv.toDataURL('image/jpeg', q));
     };
-    doWobble();
-  }, 620);
+    img.onerror = rej;
+    img.src = url;
+  });
 }
 
-function finish(caught) {
-  target.style.visibility = 'visible';
-  if (caught) return caughtCat();
-  if (Math.random() < RARITY[cur.cat.r].flee) {
-    removeSpawn(cur);
-    showResult(`<div class="big">Oh no! 💨</div><div>${cur.cat.name} ran away.</div><button class="btn" id="resBtn">OK</button>`);
-  } else {
-    target.classList.remove('dodge'); void target.offsetWidth; target.classList.add('dodge');
-    toast('It broke free! Try again');
-    busy = false; resetBall();
-  }
+function randomName() { return NAMES[Math.floor(Math.random() * NAMES.length)]; }
+function openAdd(photo, thumb) {
+  draft = { photo, thumb, coat: null, lat: null, lng: null };
+  document.getElementById('addImg').src = photo;
+  document.getElementById('addName').value = '';
+  document.getElementById('addNote').value = '';
+  renderChips();
+  const loc = document.getElementById('addLoc');
+  loc.textContent = '📍 Getting location…';
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(
+      p => { if (draft) { draft.lat = p.coords.latitude; draft.lng = p.coords.longitude; loc.textContent = '📍 Location saved'; } },
+      () => { loc.textContent = '📍 No location (that\'s OK!)'; },
+      { enableHighAccuracy: true, timeout: 15000, maximumAge: 60000 });
+  } else loc.textContent = '📍 No location (that\'s OK!)';
+  document.getElementById('addSheet').classList.add('open');
+}
+function renderChips() {
+  document.getElementById('coatChips').innerHTML = COATS.map(c =>
+    `<button class="chip ${draft.coat === c.id ? 'on' : ''}" data-id="${c.id}">${catSVG(c)}${c.name}</button>`).join('');
+}
+document.getElementById('coatChips').onclick = e => {
+  const b = e.target.closest('.chip'); if (!b) return;
+  draft.coat = b.dataset.id; renderChips();
+};
+document.getElementById('dice').onclick = () => document.getElementById('addName').value = randomName();
+document.getElementById('cancelBtn').onclick = () => { draft = null; document.getElementById('addSheet').classList.remove('open'); };
+
+document.getElementById('saveBtn').onclick = async () => {
+  if (!draft.coat) { toast('Pick a coat type first 🎨'); return; }
+  const coatIsNew = !cats.some(c => c.coat === draft.coat);
+  const lvlBefore = levelOf(totalXP());
+  const cat = {
+    id: Date.now().toString(36) + Math.random().toString(36).slice(2, 6),
+    name: document.getElementById('addName').value.trim() || randomName(),
+    note: document.getElementById('addNote').value.trim(),
+    coat: draft.coat, photo: draft.photo, thumb: draft.thumb,
+    lat: draft.lat, lng: draft.lng, date: Date.now(), seen: 1,
+  };
+  try { await putCat(cat); } catch (e) { toast('Could not save. Is your phone storage full?'); return; }
+  cats.push(cat); draft = null;
+  document.getElementById('addSheet').classList.remove('open');
+  renderAll();
+  const xp = XP_NEW_CAT + (coatIsNew ? XP_NEW_COAT : 0);
+  const lvlAfter = levelOf(totalXP());
+  celebrate(cat, [
+    `+${xp} XP`,
+    coatIsNew ? `🆕 New Catdex entry: ${coatById(cat.coat).name}!` : '',
+    lvlAfter > lvlBefore ? `🎉 Level up! You're level ${lvlAfter}` : '',
+  ]);
+};
+
+function celebrate(cat, lines) {
+  const y = document.getElementById('yay');
+  y.innerHTML = `<div class="big">Gotcha! 🎉</div><img src="${cat.thumb}" alt="">
+    <div style="font-size:24px;font-weight:700">${esc(cat.name)}</div>
+    ${lines.filter(Boolean).map(l => `<div style="margin-top:6px">${l}</div>`).join('')}
+    <button class="btn" id="yayBtn">Yay!</button>`;
+  y.classList.add('open');
+  document.getElementById('yayBtn').onclick = () => y.classList.remove('open');
 }
 
-function caughtCat() {
-  const c = cur.cat, isNew = !S.cats.some(x => x.b === c.id);
-  const xp = RARITY[c.r].xp + (isNew ? 500 : 0);
-  const lvlBefore = levelOf(S.xp);
-  const mine = { b: c.id, n: NAMES[Math.floor(Math.random() * NAMES.length)], p: Math.floor(10 + Math.random() * 90 * (1 + Object.keys(RARITY).indexOf(c.r))), t: Date.now() };
-  S.cats.push(mine); S.xp += xp;
-  const bonusYarn = 1 + Math.floor(Math.random() * 3);
-  S.yarn = Math.min(MAX_YARN, S.yarn + bonusYarn);
-  save(); renderHUD(); removeSpawn(cur);
-  const lvlUp = levelOf(S.xp) > lvlBefore ? `<div style="margin-top:8px;font-weight:700">🎉 Level up! You're level ${levelOf(S.xp)}</div>` : '';
-  showResult(`<div class="big">Gotcha! 🎉</div>
-    <div class="card">${catSVG(c)}
-      <div style="font-size:22px;font-weight:700">${mine.n}</div>
-      <div>${c.name} ${isNew ? '· <b>NEW!</b>' : ''}</div>
-      <div style="color:var(--muted);margin-top:6px">Purr Power ${mine.p}</div>
-      <div style="margin-top:8px">+${xp} XP · +${bonusYarn} 🧶</div>${lvlUp}
-    </div><button class="btn" id="resBtn">Yay!</button>`);
+// ---------- My Cats ----------
+function renderCollection() {
+  const sorted = cats.slice().sort((a, b) => b.date - a.date);
+  document.getElementById('colSub').textContent = cats.length
+    ? `${cats.length} cat${cats.length === 1 ? '' : 's'} spotted` : '';
+  document.getElementById('grid').innerHTML = sorted.map(c =>
+    `<div class="photoCard" data-id="${c.id}" style="border-color:${RARITY[coatById(c.coat).r]}">
+      <img src="${c.thumb}" alt="" loading="lazy">
+      <div class="info"><div class="nm">${esc(c.name)}</div><small>${coatById(c.coat).name}${c.seen > 1 ? ` · seen ×${c.seen}` : ''}</small></div>
+    </div>`).join('');
+  document.getElementById('empty').innerHTML = cats.length ? '' :
+    `${catSVG(COATS[0])}<p><b>No cats yet!</b></p><p>See a cat? Tap <b>📷 Spot a cat!</b> to snap it and start your collection.</p>`;
 }
+document.getElementById('grid').onclick = e => {
+  const card = e.target.closest('.photoCard'); if (card) openDetail(card.dataset.id);
+};
 
-function showResult(html) {
-  result.innerHTML = html; result.classList.add('show');
-  document.getElementById('resBtn').onclick = closeCatch;
+function openDetail(id) {
+  const c = cats.find(x => x.id === id); if (!c) return;
+  const coat = coatById(c.coat);
+  document.getElementById('detailBox').innerHTML = `
+    <img class="big" src="${c.photo}" alt="">
+    <h2 style="margin-top:12px">${esc(c.name)}</h2>
+    <span class="tag" style="background:${RARITY[coat.r]}">${coat.name}</span>
+    <div class="meta" style="margin-top:10px">📅 First seen ${new Date(c.date).toLocaleDateString(undefined, { day: 'numeric', month: 'short', year: 'numeric' })}</div>
+    <div class="meta">👀 Seen ${c.seen} time${c.seen === 1 ? '' : 's'}</div>
+    ${c.note ? `<p>${esc(c.note)}</p>` : ''}
+    <button class="btn" id="seenBtn">👋 I saw them again! (+${XP_SEEN_AGAIN} XP)</button>
+    ${c.lat != null ? `<button class="btn ghost" id="showMapBtn">🗺️ Show on map</button>` : ''}
+    <button class="btn ghost" id="closeDetail">Close</button>
+    <button class="btn danger" id="delBtn">Delete this cat</button>`;
+  const sheet = document.getElementById('detailSheet');
+  sheet.classList.add('open');
+  document.getElementById('closeDetail').onclick = () => sheet.classList.remove('open');
+  document.getElementById('seenBtn').onclick = async () => {
+    c.seen++; await putCat(c); renderAll(); openDetail(id); toast(`Hi again, ${c.name}! +${XP_SEEN_AGAIN} XP`);
+  };
+  const mb = document.getElementById('showMapBtn');
+  if (mb) mb.onclick = () => { sheet.classList.remove('open'); showTab('map'); map.setView([c.lat, c.lng], 18); };
+  document.getElementById('delBtn').onclick = async () => {
+    if (!confirm(`Delete ${c.name}? This can't be undone.`)) return;
+    await delCat(id); cats = cats.filter(x => x.id !== id);
+    sheet.classList.remove('open'); renderAll();
+  };
 }
-function removeSpawn(s) { map.removeLayer(s.marker); spawns = spawns.filter(x => x !== s); }
+document.querySelectorAll('.sheet').forEach(s => s.addEventListener('click', e => {
+  if (e.target === s && s.id !== 'addSheet') s.classList.remove('open');
+}));
 
 // ---------- Catdex ----------
 function renderDex() {
   const counts = {};
-  S.cats.forEach(c => counts[c.b] = (counts[c.b] || 0) + 1);
+  cats.forEach(c => counts[c.coat] = (counts[c.coat] || 0) + 1);
   const found = Object.keys(counts).length;
-  document.getElementById('dexSub').textContent = `${found} / ${CATS.length} breeds found · ${S.cats.length} cats caught`;
-  document.getElementById('dexGrid').innerHTML = CATS.map(c => {
+  document.getElementById('dexSub').textContent = found === COATS.length
+    ? `🏆 You found every coat type! Legend.` : `${found} / ${COATS.length} coat types found`;
+  document.getElementById('dexGrid').innerHTML = COATS.map(c => {
     const n = counts[c.id] || 0;
-    return `<div class="dexCard ${n ? '' : 'unseen'}" data-id="${c.id}" style="${n ? `border-color:${RARITY[c.r].color}` : ''}">
-      <div class="no">#${String(c.id + 1).padStart(2, '0')}</div>${n ? `<div class="ct">×${n}</div>` : ''}
-      ${catSVG(c)}<div class="nm">${n ? c.name : '???'}</div></div>`;
+    return `<div class="dexCard ${n ? '' : 'unseen'}" style="${n ? `border-color:${RARITY[c.r]}` : ''}">
+      ${n ? `<div class="ct">×${n}</div>` : ''}${catSVG(c)}
+      <div class="nm">${n ? c.name : '???'}</div></div>`;
   }).join('');
 }
-document.getElementById('dexGrid').onclick = e => {
-  const card = e.target.closest('.dexCard'); if (!card) return;
-  const c = CATS[+card.dataset.id], mine = S.cats.filter(x => x.b === c.id);
-  if (!mine.length) { toast('Not found yet. Keep exploring! 🐾'); return; }
-  document.getElementById('modalBox').innerHTML = `${catSVG(c, 'hero')}
-    <h2 style="margin:4px 0">${c.name}</h2>
-    <span class="tag" style="background:${RARITY[c.r].color}">${c.r}</span>
-    <p>${c.fact}</p>
-    <div style="text-align:left;font-weight:700;margin:12px 4px 4px">Your ${c.name}s</div>
-    ${mine.slice().reverse().map(m => `<div class="myCat"><div><b>${m.n}</b><br><small>${new Date(m.t).toLocaleDateString()}</small></div><div>⚡ ${m.p}</div></div>`).join('')}
-    <button class="btn" onclick="document.getElementById('modal').classList.remove('open')">Close</button>`;
-  document.getElementById('modal').classList.add('open');
-};
-document.getElementById('modal').onclick = e => { if (e.target.id === 'modal') e.target.classList.remove('open'); };
+
+// ---------- Map ----------
+let map = null, pinLayer = null;
+function initMap() {
+  map = L.map('map', { zoomControl: false }).setView([51.5074, -0.1278], 13);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19, attribution: '&copy; OpenStreetMap' }).addTo(map);
+  pinLayer = L.layerGroup().addTo(map);
+  const placed = cats.filter(c => c.lat != null);
+  if (placed.length) map.fitBounds(placed.map(c => [c.lat, c.lng]), { padding: [60, 60], maxZoom: 17 });
+  else if (navigator.geolocation) navigator.geolocation.getCurrentPosition(p => map.setView([p.coords.latitude, p.coords.longitude], 16));
+  if (navigator.geolocation) navigator.geolocation.watchPosition(p => {
+    const ll = [p.coords.latitude, p.coords.longitude];
+    if (!initMap.me) initMap.me = L.marker(ll, { interactive: false, icon: L.divIcon({ className: '', html: '<div class="me"></div>', iconSize: [18, 18], iconAnchor: [9, 9] }) }).addTo(map);
+    else initMap.me.setLatLng(ll);
+  }, () => {}, { enableHighAccuracy: true, maximumAge: 10000 });
+}
+function renderMap() {
+  if (!map) return;
+  pinLayer.clearLayers();
+  cats.filter(c => c.lat != null).forEach(c => {
+    L.marker([c.lat, c.lng], { icon: L.divIcon({ className: '', iconSize: [48, 48], iconAnchor: [24, 24],
+      html: `<div class="pin" style="background-image:url(${c.thumb});border-color:${getComputedStyle(document.documentElement).getPropertyValue('--' + coatById(c.coat).r)}"></div>` }) })
+      .on('click', () => openDetail(c.id)).addTo(pinLayer);
+  });
+}
 
 // ---------- Tabs ----------
 function showTab(t) {
-  document.getElementById('mapView').style.display = t === 'map' ? 'block' : 'none';
-  document.getElementById('dexView').style.display = t === 'dex' ? 'block' : 'none';
-  document.getElementById('tabMap').classList.toggle('on', t === 'map');
-  document.getElementById('tabDex').classList.toggle('on', t === 'dex');
-  if (t === 'dex') renderDex(); else map.invalidateSize();
+  document.querySelectorAll('.view').forEach(v => v.classList.toggle('on', v.id === t + 'View'));
+  document.querySelectorAll('#nav button').forEach(b => b.classList.toggle('on', b.dataset.tab === t));
+  if (t === 'map') { if (!map) initMap(); map.invalidateSize(); renderMap(); }
 }
-document.getElementById('tabMap').onclick = () => showTab('map');
-document.getElementById('tabDex').onclick = () => showTab('dex');
+document.querySelectorAll('#nav button').forEach(b => b.onclick = () => showTab(b.dataset.tab));
+
+function renderAll() { renderHUD(); renderCollection(); renderDex(); renderMap(); }
 
 // ---------- Go! ----------
-renderHUD();
-startGPS();
+openDB().then(loadAll).then(all => { cats = all || []; renderAll(); })
+  .catch(() => { renderAll(); toast("Can't save photos in this browser (private mode?)", 4000); });
 </script>
 </body>
 </html>

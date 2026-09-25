@@ -1,11 +1,14 @@
 # 🐱 KitCatGo
 
-Catch cats around you, Pokémon Go style. One file: `index.html`.
+Spot real cats, snap a photo, build your collection. Pokémon Go style.
 
-- Walk around: cats appear on the map near you
-- Tap a nearby cat, then swipe the 🧶 yarn up to catch it
-- Throw when the ring is small for a better chance
-- Fill your Catdex: 20 breeds, from Common to Legendary
-- No GPS? Tap 👣 (Walk mode) and tap the map to move
+Play: https://ktsparkes.github.io/KitCatGo/
 
-Progress is saved in your browser.
+- 📷 Tap **Spot a cat!** to take a photo
+- ✏️ Give it a name and pick its coat type
+- 📍 It remembers where you saw it
+- 🗺️ See all your cats on the map
+- 📖 Fill the Catdex: collect all 12 coat types
+- ⭐ Earn XP and level up. Tap "I saw them again!" for bonus XP
+
+Photos are saved on your phone only (in your browser).
