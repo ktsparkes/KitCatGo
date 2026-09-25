@@ -1,0 +1,61 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <defs>
+    <radialGradient id="bg" cx="50%" cy="40%" r="70%">
+      <stop offset="0" stop-color="#ffd3b0"/><stop offset="1" stop-color="#ff8a5c"/>
+    </radialGradient>
+    <radialGradient id="fur" cx="50%" cy="45%" r="60%">
+      <stop offset="0" stop-color="#f0b865"/><stop offset="1" stop-color="#c98a3c"/>
+    </radialGradient>
+  </defs>
+  <rect width="512" height="512" rx="112" fill="url(#bg)"/>
+  <!-- ears -->
+  <path d="M92 250 L118 62 L236 160 Z" fill="url(#fur)" stroke="#6b4420" stroke-width="6" stroke-linejoin="round"/>
+  <path d="M420 250 L394 62 L276 160 Z" fill="url(#fur)" stroke="#6b4420" stroke-width="6" stroke-linejoin="round"/>
+  <path d="M124 200 L136 108 L200 164 Z" fill="#f6a7a7"/>
+  <path d="M388 200 L376 108 L312 164 Z" fill="#f6a7a7"/>
+  <!-- head -->
+  <ellipse cx="256" cy="300" rx="196" ry="170" fill="url(#fur)" stroke="#6b4420" stroke-width="6"/>
+  <!-- tabby M stripes on forehead -->
+  <g stroke="#4a2c12" stroke-width="13" stroke-linecap="round" fill="none">
+    <path d="M206 214 L220 150 L256 196 L292 150 L306 214"/>
+    <path d="M256 140 L256 164"/>
+  </g>
+  <!-- cheek stripes -->
+  <g stroke="#4a2c12" stroke-width="11" stroke-linecap="round">
+    <path d="M70 290 L128 298"/><path d="M76 330 L130 326"/>
+    <path d="M442 290 L384 298"/><path d="M436 330 L382 326"/>
+  </g>
+  <!-- bengal rosettes: dark rim, warm centre -->
+  <g fill="#4a2c12">
+    <path d="M118 220 a26 22 0 1 0 1 0 Z M119 230 a14 11 0 1 1 -1 0 Z" fill-rule="evenodd"/>
+    <path d="M394 220 a26 22 0 1 0 1 0 Z M393 230 a14 11 0 1 1 -1 0 Z" fill-rule="evenodd"/>
+    <path d="M150 390 a22 18 0 1 0 1 0 Z M151 398 a11 9 0 1 1 -1 0 Z" fill-rule="evenodd"/>
+    <path d="M362 390 a22 18 0 1 0 1 0 Z M361 398 a11 9 0 1 1 -1 0 Z" fill-rule="evenodd"/>
+    <circle cx="176" cy="180" r="9"/><circle cx="336" cy="180" r="9"/>
+    <circle cx="104" cy="360" r="8"/><circle cx="408" cy="360" r="8"/>
+  </g>
+  <g fill="#b0702a">
+    <ellipse cx="119" cy="241" rx="13" ry="10"/><ellipse cx="393" cy="241" rx="13" ry="10"/>
+    <ellipse cx="151" cy="407" rx="10" ry="8"/><ellipse cx="361" cy="407" rx="10" ry="8"/>
+  </g>
+  <!-- muzzle -->
+  <ellipse cx="256" cy="370" rx="84" ry="62" fill="#fbe6c4"/>
+  <!-- eyes with dark eyeliner -->
+  <g>
+    <ellipse cx="184" cy="278" rx="42" ry="46" fill="#3b2410"/>
+    <ellipse cx="328" cy="278" rx="42" ry="46" fill="#3b2410"/>
+    <ellipse cx="184" cy="278" rx="35" ry="39" fill="#8fc43a"/>
+    <ellipse cx="328" cy="278" rx="35" ry="39" fill="#8fc43a"/>
+    <ellipse cx="184" cy="282" rx="12" ry="30" fill="#111"/>
+    <ellipse cx="328" cy="282" rx="12" ry="30" fill="#111"/>
+    <circle cx="196" cy="262" r="9" fill="#fff"/><circle cx="340" cy="262" r="9" fill="#fff"/>
+  </g>
+  <!-- nose + mouth -->
+  <path d="M234 342 L278 342 L256 368 Z" fill="#e8858f" stroke="#8a4a3a" stroke-width="4" stroke-linejoin="round"/>
+  <path d="M256 368 Q240 396 214 386 M256 368 Q272 396 298 386" stroke="#4a2c12" stroke-width="7" fill="none" stroke-linecap="round"/>
+  <!-- whiskers -->
+  <g stroke="#fff" stroke-width="4" stroke-linecap="round" opacity=".9">
+    <path d="M188 368 L60 350"/><path d="M190 384 L64 400"/>
+    <path d="M324 368 L452 350"/><path d="M322 384 L448 400"/>
+  </g>
+</svg>
