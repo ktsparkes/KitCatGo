@@ -6,7 +6,7 @@
 <meta name="theme-color" content="#ff8a5c">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <title>KitCatGo</title>
-<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="icon" href="icon-192.png" type="image/png">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="manifest" href="manifest.json">
 <meta name="apple-mobile-web-app-title" content="KitCatGo">
@@ -57,16 +57,16 @@
   .photoCard .nm { font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .photoCard small { color: var(--muted); }
   #empty { text-align: center; padding: 40px 16px; color: var(--muted); }
-  #empty svg { width: 120px; height: 120px; }
+  #empty .catPic { width: 140px; height: 140px; border-radius: 50%; object-fit: cover; }
 
   /* Catdex */
   #dexGrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 10px; }
   .dexCard { background: var(--card); border-radius: 16px; padding: 8px 6px 10px; text-align: center;
     border: 2px solid var(--line); position: relative; }
-  .dexCard svg { width: 60px; height: 60px; }
+  .dexCard .catPic { width: 72px; height: 72px; border-radius: 50%; object-fit: cover; display: block; margin: 0 auto 4px; }
   .dexCard .nm { font-size: 13px; font-weight: 600; line-height: 1.1; }
   .dexCard .ct { position: absolute; top: 4px; right: 8px; font-size: 12px; font-weight: 700; color: var(--brand-dark); }
-  .dexCard.unseen svg { filter: brightness(0) opacity(.2); }
+  .dexCard.unseen .catPic { filter: grayscale(1) blur(5px) opacity(.45); }
   .dexCard.unseen .nm { color: var(--muted); }
 
   /* Spot button */
@@ -103,7 +103,7 @@
   .chips { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
   .chip { background: var(--bg); border: 2px solid var(--line); border-radius: 12px; padding: 4px 2px 6px;
     text-align: center; font-size: 11px; font-weight: 600; color: var(--ink); }
-  .chip svg { width: 38px; height: 38px; display: block; margin: 0 auto; }
+  .chip .catPic { width: 44px; height: 44px; border-radius: 50%; object-fit: cover; display: block; margin: 2px auto 3px; }
   .chip.on { border-color: var(--brand); background: rgba(255,138,92,.15); }
   .btn { background: var(--brand); color: #fff; border: 0; border-radius: 999px; padding: 13px 24px;
     font-size: 17px; font-weight: 700; width: 100%; margin-top: 16px; }
@@ -132,7 +132,7 @@
 <body>
 
 <div id="topbar">
-  <div id="logo"><img src="icon.svg" alt="">KitCatGo</div>
+  <div id="logo"><img src="icon-192.png" alt="">KitCatGo</div>
   <div class="pill" id="lvl"><div id="lvlNum">1</div><div id="xpbar"><div id="xpfill"></div></div></div>
 </div>
 
@@ -209,33 +209,7 @@ const NAMES = ['Mochi','Biscuit','Luna','Pickle','Noodle','Pumpkin','Waffles','T
   'Sir Fluffington','Captain Whiskers','Duchess','Meatball','Crumpet','Pudding','Gizmo','Smudge','Tigger','Bagel'];
 
 function catSVG(c, cls = '') {
-  const f = c.fur, a = c.acc;
-  let pat = '';
-  if (c.pat === 'tabby') pat = `<path d="M42 26 L44 38 M50 24 L50 38 M58 26 L56 38" stroke="${a}" stroke-width="3.5" stroke-linecap="round"/>
-      <path d="M14 56 L26 58 M14 66 L26 64 M86 56 L74 58 M86 66 L74 64" stroke="${a}" stroke-width="3" stroke-linecap="round"/>`;
-  if (c.pat === 'patches') pat = `<path d="M20 40 Q30 26 46 30 Q44 46 26 52 Z" fill="${a}"/><path d="M60 28 Q76 28 82 46 Q70 46 62 40 Z" fill="#3b3b3b"/>`;
-  if (c.pat === 'spots') pat = [[30,42,5],[68,40,6],[26,62,4],[74,64,5],[50,30,4],[40,78,3],[62,80,3]]
-      .map(([x,y,r]) => `<circle cx="${x}" cy="${y}" r="${r}" fill="${a}"/>`).join('');
-  if (c.pat === 'points') pat = `<ellipse cx="50" cy="68" rx="22" ry="17" fill="${a}" opacity=".85"/>`;
-  if (c.pat === 'tuxedo') pat = `<path d="M50 44 Q34 56 34 74 Q50 90 66 74 Q66 56 50 44 Z" fill="${a}"/>`;
-  const fluff = c.pat === 'fluff'
-    ? `<path d="M12 60 Q4 70 14 78 Q10 90 26 90 Q36 98 50 94 Q64 98 74 90 Q90 90 86 78 Q96 70 88 60 Z" fill="${a}"/>` : '';
-  const dark = c.pat === 'tuxedo' || c.fur === '#232323';
-  return `<svg class="${cls}" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-    <path d="M18 42 L24 8 L46 28 Z" fill="${f}" stroke="${a}" stroke-width="1.5"/>
-    <path d="M82 42 L76 8 L54 28 Z" fill="${f}" stroke="${a}" stroke-width="1.5"/>
-    <path d="M24 34 L27 16 L39 28 Z" fill="#f8a5b3"/><path d="M76 34 L73 16 L61 28 Z" fill="#f8a5b3"/>
-    ${fluff}
-    <ellipse cx="50" cy="58" rx="38" ry="34" fill="${f}" stroke="${a}" stroke-width="1.5"/>
-    ${pat}
-    <ellipse cx="36" cy="54" rx="7" ry="8" fill="${c.eye}"/><ellipse cx="64" cy="54" rx="7" ry="8" fill="${c.eye}"/>
-    <ellipse cx="36" cy="55" rx="2.5" ry="6" fill="#111"/><ellipse cx="64" cy="55" rx="2.5" ry="6" fill="#111"/>
-    <circle cx="38" cy="51" r="1.8" fill="#fff"/><circle cx="66" cy="51" r="1.8" fill="#fff"/>
-    <path d="M46 66 L54 66 L50 71 Z" fill="#f48fb1"/>
-    <path d="M50 71 Q46 77 41 74 M50 71 Q54 77 59 74" stroke="${dark ? '#bbb' : '#5d4037'}" stroke-width="1.8" fill="none" stroke-linecap="round"/>
-    <path d="M30 68 L8 64 M30 72 L9 75 M70 68 L92 64 M70 72 L91 75" stroke="${dark ? '#ccc' : '#6d5a50'}" stroke-width="1" opacity=".7"/>
-    ${c.id === 'mystery' ? '<text x="70" y="30" font-size="12">✨</text>' : ''}
-  </svg>`;
+  return `<img class="catPic ${cls}" src="cats/${c.id}.jpg" alt="${c.name}">`;
 }
 const esc = s => String(s ?? '').replace(/[&<>"']/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch]));
 
@@ -382,7 +356,7 @@ function renderCollection() {
       <div class="info"><div class="nm">${esc(c.name)}</div><small>${coatById(c.coat).name}${c.seen > 1 ? ` · seen ×${c.seen}` : ''}</small></div>
     </div>`).join('');
   document.getElementById('empty').innerHTML = cats.length ? '' :
-    `${catSVG(COATS[0])}<p><b>No cats yet!</b></p><p>See a cat? Tap <b>📷 Spot a cat!</b> to snap it and start your collection.</p>`;
+    `${catSVG(COATS[2])}<p><b>No cats yet!</b></p><p>See a cat? Tap <b>📷 Spot a cat!</b> to snap it and start your collection.</p>`;
 }
 document.getElementById('grid').onclick = e => {
   const card = e.target.closest('.photoCard'); if (card) openDetail(card.dataset.id);
