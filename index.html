@@ -123,6 +123,48 @@
   #yay .btn { max-width: 260px; }
   @keyframes pop { 0% { transform: scale(.3); opacity: 0; } 70% { transform: scale(1.1); } 100% { transform: scale(1); opacity: 1; } }
 
+  /* Wild cats on the map */
+  #yarnPill { display: none; }
+  body.onMap #yarnPill { display: flex; }
+  #mapBtns { position: absolute; right: 16px; bottom: 90px; z-index: 900; display: flex; flex-direction: column; gap: 10px; }
+  .roundBtn { width: 48px; height: 48px; border-radius: 50%; border: 0; background: var(--card); color: var(--ink);
+    box-shadow: 0 2px 10px rgba(0,0,0,.2); font-size: 22px; }
+  .roundBtn.on { background: var(--brand); color: #fff; }
+  .wild { position: relative; width: 56px; height: 56px; animation: bob 1.6s ease-in-out infinite; }
+  .wild img { width: 56px; height: 56px; border-radius: 50%; object-fit: cover; border: 3px solid; box-shadow: 0 3px 10px rgba(0,0,0,.35); }
+  .wild.far { opacity: .6; }
+  .wild.far img { filter: saturate(.6); }
+  @keyframes bob { 50% { transform: translateY(-6px); } }
+  .badge { position: absolute; top: 6px; left: 6px; background: rgba(0,0,0,.55); color: #fff; border-radius: 999px;
+    font-size: 12px; padding: 2px 7px; }
+  .photoCard { position: relative; }
+
+  /* Catch screen */
+  #catch { position: fixed; inset: 0; z-index: 2600; display: none; flex-direction: column; align-items: center;
+    background: linear-gradient(#bfe6ff, #e9f7d8 60%, #9ed680 60%, #7cc05e); touch-action: none; user-select: none; }
+  #catch.open { display: flex; }
+  #catchTop { width: 100%; display: flex; justify-content: space-between; align-items: center; gap: 8px;
+    padding: calc(12px + env(safe-area-inset-top)) 16px 0; color: #3b2a22; }
+  #catchName { font-size: 22px; font-weight: 700; text-align: center; }
+  #catchRarity { font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; text-align: center; }
+  #runBtn { background: rgba(255,255,255,.85); border: 0; border-radius: 999px; padding: 8px 14px; font-weight: 600; color: #3b2a22; }
+  #catch .pill { color: #3b2a22; background: #fff; }
+  #arena { position: relative; flex: 1; width: 100%; }
+  #target { position: absolute; left: 50%; top: 38%; transform: translate(-50%, -50%); width: 170px; height: 170px; }
+  #target img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; border: 5px solid #fff;
+    box-shadow: 0 8px 24px rgba(0,0,0,.25); animation: idle 2s ease-in-out infinite; }
+  #target.dodge img { animation: dodge .4s ease; }
+  #ring { position: absolute; left: 50%; top: 50%; border: 5px solid; border-radius: 50%; transform: translate(-50%, -50%); pointer-events: none; }
+  #ringOuter { position: absolute; left: 50%; top: 50%; width: 220px; height: 220px; border: 3px solid rgba(255,255,255,.8);
+    border-radius: 50%; transform: translate(-50%, -50%); pointer-events: none; }
+  @keyframes idle { 50% { transform: translateY(-8px) scale(1.02); } }
+  @keyframes dodge { 30% { transform: translateX(-40px) rotate(-10deg); } 70% { transform: translateX(30px) rotate(8deg); } }
+  #ball { position: absolute; left: 50%; bottom: 70px; width: 80px; height: 80px; margin-left: -40px; font-size: 66px;
+    line-height: 80px; text-align: center; touch-action: none; }
+  #hint { position: absolute; bottom: calc(22px + env(safe-area-inset-bottom)); width: 100%; text-align: center; color: #2d4a1f; font-weight: 600; padding: 0 16px; }
+  .wobble { animation: wobble .5s ease; }
+  @keyframes wobble { 25% { transform: rotate(-20deg); } 75% { transform: rotate(20deg); } }
+
   #toast { position: fixed; left: 50%; top: calc(70px + env(safe-area-inset-top)); transform: translateX(-50%);
     z-index: 4000; background: var(--ink); color: var(--bg); padding: 10px 16px; border-radius: 12px; font-weight: 600;
     opacity: 0; transition: opacity .3s; pointer-events: none; max-width: calc(100% - 32px); text-align: center; }
@@ -133,6 +175,7 @@
 
 <div id="topbar">
   <div id="logo"><img src="icon-192.png" alt="">KitCatGo</div>
+  <div class="pill" id="yarnPill">🧶 <span id="yarnCount">0</span></div>
   <div class="pill" id="lvl"><div id="lvlNum">1</div><div id="xpbar"><div id="xpfill"></div></div></div>
 </div>
 
@@ -143,7 +186,13 @@
   <div id="empty"></div>
 </div>
 
-<div class="view" id="mapView"><div id="map"></div></div>
+<div class="view" id="mapView">
+  <div id="map"></div>
+  <div id="mapBtns">
+    <button class="roundBtn" id="walkBtn" title="Walk mode: tap the map to move">👣</button>
+    <button class="roundBtn" id="centerBtn" title="Centre on me">📍</button>
+  </div>
+</div>
 
 <div class="view" id="dexView">
   <h2>Catdex</h2>
@@ -179,6 +228,19 @@
 
 <!-- Cat detail sheet -->
 <div class="sheet" id="detailSheet"><div class="sheetBox" id="detailBox"></div></div>
+
+<div id="catch">
+  <div id="catchTop">
+    <button id="runBtn">🏃 Run</button>
+    <div><div id="catchName"></div><div id="catchRarity"></div></div>
+    <div class="pill">🧶 <span id="yarnLeft"></span></div>
+  </div>
+  <div id="arena">
+    <div id="target"><div id="ringOuter"></div><div id="ring"></div><div id="targetArt"></div></div>
+    <div id="ball">🧶</div>
+    <div id="hint">Swipe the yarn up at the cat! Throw when the ring is small for a bonus.</div>
+  </div>
+</div>
 
 <div id="yay"></div>
 <div id="toast"></div>
@@ -236,12 +298,12 @@ const putCat = c => tx('readwrite', s => s.put(c));
 const delCat = id => tx('readwrite', s => s.delete(id));
 
 // ---------- XP & levels ----------
-const XP_NEW_CAT = 100, XP_NEW_COAT = 300, XP_SEEN_AGAIN = 25;
+const XP_NEW_CAT = 100, XP_WILD_CAT = 50, XP_NEW_COAT = 300, XP_SEEN_AGAIN = 25;
 const levelOf = xp => Math.floor(Math.sqrt(xp / 250)) + 1;
 const xpFor = lvl => (lvl - 1) ** 2 * 250;
 function totalXP() {
   const coats = new Set(cats.map(c => c.coat));
-  return cats.reduce((s, c) => s + XP_NEW_CAT + (c.seen - 1) * XP_SEEN_AGAIN, 0) + coats.size * XP_NEW_COAT;
+  return cats.reduce((s, c) => s + (c.wild ? XP_WILD_CAT : XP_NEW_CAT) + (c.seen - 1) * XP_SEEN_AGAIN, 0) + coats.size * XP_NEW_COAT;
 }
 function renderHUD() {
   const xp = totalXP(), lvl = levelOf(xp), lo = xpFor(lvl), hi = xpFor(lvl + 1);
@@ -349,14 +411,14 @@ function celebrate(cat, lines) {
 function renderCollection() {
   const sorted = cats.slice().sort((a, b) => b.date - a.date);
   document.getElementById('colSub').textContent = cats.length
-    ? `${cats.length} cat${cats.length === 1 ? '' : 's'} spotted` : '';
+    ? `📷 ${cats.filter(c => !c.wild).length} spotted · 🎮 ${cats.filter(c => c.wild).length} caught on the map` : '';
   document.getElementById('grid').innerHTML = sorted.map(c =>
     `<div class="photoCard" data-id="${c.id}" style="border-color:${RARITY[coatById(c.coat).r]}">
-      <img src="${c.thumb}" alt="" loading="lazy">
+      <img src="${c.thumb}" alt="" loading="lazy"><span class="badge">${c.wild ? '🎮' : '📷'}</span>
       <div class="info"><div class="nm">${esc(c.name)}</div><small>${coatById(c.coat).name}${c.seen > 1 ? ` · seen ×${c.seen}` : ''}</small></div>
     </div>`).join('');
   document.getElementById('empty').innerHTML = cats.length ? '' :
-    `${catSVG(COATS[2])}<p><b>No cats yet!</b></p><p>See a cat? Tap <b>📷 Spot a cat!</b> to snap it and start your collection.</p>`;
+    `${catSVG(COATS[2])}<p><b>No cats yet!</b></p><p>See a cat? Tap <b>📷 Spot a cat!</b> to snap it, or catch wild cats on the 🗺️ Map.</p>`;
 }
 document.getElementById('grid').onclick = e => {
   const card = e.target.closest('.photoCard'); if (card) openDetail(card.dataset.id);
@@ -369,17 +431,19 @@ function openDetail(id) {
     <img class="big" src="${c.photo}" alt="">
     <h2 style="margin-top:12px">${esc(c.name)}</h2>
     <span class="tag" style="background:${RARITY[coat.r]}">${coat.name}</span>
-    <div class="meta" style="margin-top:10px">📅 First seen ${new Date(c.date).toLocaleDateString(undefined, { day: 'numeric', month: 'short', year: 'numeric' })}</div>
-    <div class="meta">👀 Seen ${c.seen} time${c.seen === 1 ? '' : 's'}</div>
+    ${c.wild ? '<div class="meta" style="margin-top:10px">🎮 Caught in the wild on the map</div>' : ''}
+    <div class="meta" style="margin-top:10px">📅 ${c.wild ? 'Caught' : 'First seen'} ${new Date(c.date).toLocaleDateString(undefined, { day: 'numeric', month: 'short', year: 'numeric' })}</div>
+    ${c.wild ? `<div class="meta">⚡ Purr Power ${c.power || 0}</div>` : `<div class="meta">👀 Seen ${c.seen} time${c.seen === 1 ? '' : 's'}</div>`}
     ${c.note ? `<p>${esc(c.note)}</p>` : ''}
-    <button class="btn" id="seenBtn">👋 I saw them again! (+${XP_SEEN_AGAIN} XP)</button>
-    ${c.lat != null ? `<button class="btn ghost" id="showMapBtn">🗺️ Show on map</button>` : ''}
+    ${c.wild ? '' : `<button class="btn" id="seenBtn">👋 I saw them again! (+${XP_SEEN_AGAIN} XP)</button>`}
+    ${c.lat != null && !c.wild ? `<button class="btn ghost" id="showMapBtn">🗺️ Show on map</button>` : ''}
     <button class="btn ghost" id="closeDetail">Close</button>
     <button class="btn danger" id="delBtn">Delete this cat</button>`;
   const sheet = document.getElementById('detailSheet');
   sheet.classList.add('open');
   document.getElementById('closeDetail').onclick = () => sheet.classList.remove('open');
-  document.getElementById('seenBtn').onclick = async () => {
+  const sb = document.getElementById('seenBtn');
+  if (sb) sb.onclick = async () => {
     c.seen++; await putCat(c); renderAll(); openDetail(id); toast(`Hi again, ${c.name}! +${XP_SEEN_AGAIN} XP`);
   };
   const mb = document.getElementById('showMapBtn');
@@ -410,41 +474,236 @@ function renderDex() {
 }
 
 // ---------- Map ----------
-let map = null, pinLayer = null;
+let map = null, pinLayer = null, meMarker = null, rangeCircle = null, me = null, followMe = true;
+let walkMode = false, gpsWatch = null;
 function initMap() {
-  map = L.map('map', { zoomControl: false }).setView([51.5074, -0.1278], 13);
+  map = L.map('map', { zoomControl: false }).setView([51.5074, -0.1278], 17);
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19, attribution: '&copy; OpenStreetMap' }).addTo(map);
   pinLayer = L.layerGroup().addTo(map);
-  const placed = cats.filter(c => c.lat != null);
-  if (placed.length) map.fitBounds(placed.map(c => [c.lat, c.lng]), { padding: [60, 60], maxZoom: 17 });
-  else if (navigator.geolocation) navigator.geolocation.getCurrentPosition(p => map.setView([p.coords.latitude, p.coords.longitude], 16));
-  if (navigator.geolocation) navigator.geolocation.watchPosition(p => {
-    const ll = [p.coords.latitude, p.coords.longitude];
-    if (!initMap.me) initMap.me = L.marker(ll, { interactive: false, icon: L.divIcon({ className: '', html: '<div class="me"></div>', iconSize: [18, 18], iconAnchor: [9, 9] }) }).addTo(map);
-    else initMap.me.setLatLng(ll);
-  }, () => {}, { enableHighAccuracy: true, maximumAge: 10000 });
+  map.on('click', e => { if (walkMode) { followMe = false; setMe(e.latlng.lat, e.latlng.lng); } });
+  map.on('dragstart', () => followMe = false);
+  startGPS();
 }
 function renderMap() {
   if (!map) return;
   pinLayer.clearLayers();
-  cats.filter(c => c.lat != null).forEach(c => {
+  cats.filter(c => c.lat != null && !c.wild).forEach(c => {
     L.marker([c.lat, c.lng], { icon: L.divIcon({ className: '', iconSize: [48, 48], iconAnchor: [24, 24],
       html: `<div class="pin" style="background-image:url(${c.thumb});border-color:${getComputedStyle(document.documentElement).getPropertyValue('--' + coatById(c.coat).r)}"></div>` }) })
       .on('click', () => openDetail(c.id)).addTo(pinLayer);
   });
+}
+function setMe(lat, lng) {
+  me = [lat, lng];
+  if (!meMarker) {
+    meMarker = L.marker(me, { interactive: false, zIndexOffset: 1000, icon: L.divIcon({ className: '', html: '<div class="me"></div>', iconSize: [18, 18], iconAnchor: [9, 9] }) }).addTo(map);
+    rangeCircle = L.circle(me, { radius: CATCH_RANGE, color: '#ff8a5c', weight: 1, fillOpacity: .08, interactive: false }).addTo(map);
+    map.setView(me, 17);
+  } else {
+    meMarker.setLatLng(me); rangeCircle.setLatLng(me);
+    if (followMe) map.panTo(me);
+  }
+  refreshSpawns();
+}
+function startGPS() {
+  if (!navigator.geolocation) { noGPS(); return; }
+  gpsWatch = navigator.geolocation.watchPosition(
+    p => { if (!walkMode) setMe(p.coords.latitude, p.coords.longitude); },
+    () => noGPS(),
+    { enableHighAccuracy: true, maximumAge: 5000, timeout: 20000 });
+}
+function stopGPS() { if (gpsWatch !== null) navigator.geolocation.clearWatch(gpsWatch); gpsWatch = null; }
+function noGPS() {
+  if (walkMode) return;
+  setWalk(true, true);
+  if (!me) setMe(51.5074, -0.1278);
+  toast("Couldn't get your location, so Walk mode is on. Tap the map to move!", 4000);
+}
+const walkBtn = document.getElementById('walkBtn');
+function setWalk(on, quiet) {
+  walkMode = on; walkBtn.classList.toggle('on', on);
+  if (on) { stopGPS(); if (!quiet) toast('Walk mode on: tap the map to move 👣'); }
+  else { followMe = true; startGPS(); if (!quiet) toast('Using your real location 📍'); }
+}
+walkBtn.onclick = () => setWalk(!walkMode);
+document.getElementById('centerBtn').onclick = () => { followMe = true; if (me) map.setView(me, 17); };
+
+// ---------- Wild cats ----------
+const WILD = {
+  common:    { w: 50, catch: .80, flee: .08 },
+  uncommon:  { w: 28, catch: .60, flee: .12 },
+  rare:      { w: 14, catch: .45, flee: .18 },
+  epic:      { w: 6,  catch: .30, flee: .24 },
+  legendary: { w: 2,  catch: .15, flee: .30 },
+};
+const CATCH_RANGE = 70, SPAWN_COUNT = 8, SPAWN_LIFE = 10 * 60 * 1000;
+let spawns = [];
+function pickCoat() {
+  const total = Object.values(WILD).reduce((t, r) => t + r.w, 0);
+  let n = Math.random() * total, rarity = 'common';
+  for (const [k, r] of Object.entries(WILD)) { if ((n -= r.w) < 0) { rarity = k; break; } }
+  const pool = COATS.filter(c => c.r === rarity);
+  return pool[Math.floor(Math.random() * pool.length)];
+}
+function offset(lat, lng, dist, bearing) {
+  const R = 6378137, dLat = dist * Math.cos(bearing) / R, dLng = dist * Math.sin(bearing) / (R * Math.cos(lat * Math.PI / 180));
+  return [lat + dLat * 180 / Math.PI, lng + dLng * 180 / Math.PI];
+}
+function wildIcon(coat, far) {
+  return L.divIcon({ className: '', iconSize: [56, 56], iconAnchor: [28, 40],
+    html: `<div class="wild ${far ? 'far' : ''}"><img src="cats/${coat.id}.jpg" alt="" style="border-color:${getComputedStyle(document.documentElement).getPropertyValue('--' + coat.r)}"></div>` });
+}
+function refreshSpawns() {
+  if (!me || !map) return;
+  const now = Date.now();
+  spawns = spawns.filter(sp => {
+    const keep = sp.expires > now && map.distance(me, sp.pos) < 400;
+    if (!keep) map.removeLayer(sp.marker);
+    return keep;
+  });
+  while (spawns.length < SPAWN_COUNT) {
+    const coat = pickCoat();
+    const pos = offset(me[0], me[1], 30 + Math.random() * 220, Math.random() * Math.PI * 2);
+    const sp = { coat, pos, expires: now + SPAWN_LIFE * (0.5 + Math.random()) };
+    sp.marker = L.marker(pos, { icon: wildIcon(coat, true) }).addTo(map).on('click', () => tryCatch(sp));
+    spawns.push(sp);
+  }
+  spawns.forEach(sp => {
+    const far = map.distance(me, sp.pos) > CATCH_RANGE;
+    if (far !== sp.far) { sp.far = far; sp.marker.setIcon(wildIcon(sp.coat, far)); }
+  });
+}
+setInterval(refreshSpawns, 15000);
+function removeSpawn(sp) { map.removeLayer(sp.marker); spawns = spawns.filter(x => x !== sp); }
+function tryCatch(sp) {
+  if (!me) return;
+  const d = Math.round(map.distance(me, sp.pos));
+  if (d > CATCH_RANGE) { toast(`That ${sp.coat.name} cat is ${d}m away. Get closer! 🐾`); return; }
+  openCatch(sp);
+}
+
+// ---------- Yarn ----------
+const YARN_KEY = 'kitcatgo.yarn', MAX_YARN = 50, YARN_REGEN_MS = 60 * 1000;
+let Y = { n: 30, at: Date.now() };
+try { const v = JSON.parse(localStorage.getItem(YARN_KEY)); if (v) Y = v; } catch (e) {}
+function saveYarn() { try { localStorage.setItem(YARN_KEY, JSON.stringify(Y)); } catch (e) {} }
+function regenYarn() {
+  const gained = Math.floor((Date.now() - Y.at) / YARN_REGEN_MS);
+  if (gained > 0) { Y.n = Math.min(MAX_YARN, Y.n + gained); Y.at = Y.n >= MAX_YARN ? Date.now() : Y.at + gained * YARN_REGEN_MS; saveYarn(); }
+  document.getElementById('yarnCount').textContent = Y.n;
+  document.getElementById('yarnLeft').textContent = Y.n;
+}
+setInterval(regenYarn, 10000);
+
+// ---------- Catch screen ----------
+const catchEl = document.getElementById('catch'), ball = document.getElementById('ball'),
+      ring = document.getElementById('ring'), target = document.getElementById('target');
+let cur = null, ringT = 0, ringRAF = null, busy = false, start = null;
+function openCatch(sp) {
+  cur = sp; busy = false;
+  document.getElementById('catchName').textContent = `Wild ${sp.coat.name} cat`;
+  const rr = document.getElementById('catchRarity');
+  rr.textContent = sp.coat.r; rr.style.color = RARITY[sp.coat.r];
+  document.getElementById('targetArt').innerHTML = `<img src="cats/${sp.coat.id}.jpg" alt="">`;
+  ring.style.borderColor = RARITY[sp.coat.r];
+  target.style.visibility = 'visible';
+  resetBall(); regenYarn();
+  catchEl.classList.add('open');
+  const loop = () => {
+    ringT = (ringT + 0.012) % 1;
+    ring.style.width = ring.style.height = (220 - ringT * 170) + 'px';
+    ringRAF = requestAnimationFrame(loop);
+  };
+  cancelAnimationFrame(ringRAF); loop();
+}
+function closeCatch() { catchEl.classList.remove('open'); cancelAnimationFrame(ringRAF); cur = null; }
+document.getElementById('runBtn').onclick = closeCatch;
+function resetBall() {
+  ball.style.transition = 'none'; ball.style.transform = 'none';
+  ball.style.opacity = Y.n > 0 ? 1 : .3; ball.classList.remove('wobble');
+}
+ball.addEventListener('pointerdown', e => { if (!busy) start = { x: e.clientX, y: e.clientY, t: Date.now() }; });
+window.addEventListener('pointerup', e => {
+  if (!start || !cur) return;
+  const dy = start.y - e.clientY, dx = e.clientX - start.x, dt = Date.now() - start.t;
+  start = null;
+  if (dy < 40 || dt > 900) return;
+  if (Y.n <= 0) { toast('Out of yarn! You get 1 back every minute 🧶'); return; }
+  throwBall(dx / dy);
+});
+function throwBall(curve) {
+  busy = true;
+  if (Y.n >= MAX_YARN) Y.at = Date.now();
+  Y.n--; saveYarn(); regenYarn();
+  const ringSize = 220 - ringT * 170;
+  const bonus = 1 + (1 - (ringSize - 50) / 170) * 0.5;
+  const accurate = Math.abs(curve) < 0.35;
+  const tRect = target.getBoundingClientRect(), bRect = ball.getBoundingClientRect();
+  const tx = (tRect.left + tRect.width / 2) - (bRect.left + bRect.width / 2) + (accurate ? 0 : curve * 120);
+  const ty = (tRect.top + tRect.height / 2) - (bRect.top + bRect.height / 2);
+  ball.style.transition = 'transform .6s cubic-bezier(.3,.6,.4,1)';
+  ball.style.transform = `translate(${tx}px, ${ty}px) scale(.55) rotate(540deg)`;
+  setTimeout(() => {
+    if (!accurate) { toast('Missed! Swipe straight up 🎯'); busy = false; resetBall(); return; }
+    const caught = Math.random() < Math.min(0.97, WILD[cur.coat.r].catch * bonus);
+    if (ringSize < 100) toast(ringSize < 70 ? 'Purrfect throw! ⭐' : 'Great throw!');
+    target.style.visibility = 'hidden';
+    const wobbles = caught ? 3 : 1 + Math.floor(Math.random() * 2);
+    let w = 0;
+    const doWobble = () => {
+      ball.classList.remove('wobble'); void ball.offsetWidth; ball.classList.add('wobble');
+      if (++w < wobbles) setTimeout(doWobble, 700); else setTimeout(() => finishThrow(caught), 700);
+    };
+    doWobble();
+  }, 620);
+}
+async function finishThrow(caught) {
+  target.style.visibility = 'visible';
+  if (!caught) {
+    if (Math.random() < WILD[cur.coat.r].flee) {
+      toast(`Oh no! The ${cur.coat.name} cat ran away 💨`, 3000);
+      removeSpawn(cur); closeCatch();
+    } else {
+      target.classList.remove('dodge'); void target.offsetWidth; target.classList.add('dodge');
+      toast('It broke free! Try again'); busy = false; resetBall();
+    }
+    return;
+  }
+  const coat = cur.coat, coatIsNew = !cats.some(c => c.coat === coat.id), lvlBefore = levelOf(totalXP());
+  const cat = {
+    id: Date.now().toString(36) + Math.random().toString(36).slice(2, 6),
+    name: randomName(), note: '', coat: coat.id, wild: true,
+    photo: `cats/${coat.id}.jpg`, thumb: `cats/${coat.id}.jpg`,
+    power: Math.floor(10 + Math.random() * 90 * (1 + Object.keys(WILD).indexOf(coat.r))),
+    lat: cur.pos[0], lng: cur.pos[1], date: Date.now(), seen: 1,
+  };
+  try { await putCat(cat); } catch (e) { toast('Could not save that cat 😿'); }
+  cats.push(cat);
+  const bonusYarn = 1 + Math.floor(Math.random() * 3);
+  Y.n = Math.min(MAX_YARN, Y.n + bonusYarn); saveYarn(); regenYarn();
+  removeSpawn(cur); closeCatch(); renderAll();
+  const lvlAfter = levelOf(totalXP());
+  celebrate(cat, [
+    `${coat.name} · ⚡ Purr Power ${cat.power}`,
+    `+${XP_WILD_CAT + (coatIsNew ? XP_NEW_COAT : 0)} XP · +${bonusYarn} 🧶`,
+    coatIsNew ? `🆕 New Catdex entry: ${coat.name}!` : '',
+    lvlAfter > lvlBefore ? `🎉 Level up! You're level ${lvlAfter}` : '',
+  ]);
 }
 
 // ---------- Tabs ----------
 function showTab(t) {
   document.querySelectorAll('.view').forEach(v => v.classList.toggle('on', v.id === t + 'View'));
   document.querySelectorAll('#nav button').forEach(b => b.classList.toggle('on', b.dataset.tab === t));
-  if (t === 'map') { if (!map) initMap(); map.invalidateSize(); renderMap(); }
+  document.body.classList.toggle('onMap', t === 'map');
+  if (t === 'map') { if (!map) initMap(); map.invalidateSize(); renderMap(); regenYarn(); }
 }
 document.querySelectorAll('#nav button').forEach(b => b.onclick = () => showTab(b.dataset.tab));
 
 function renderAll() { renderHUD(); renderCollection(); renderDex(); renderMap(); }
 
 // ---------- Go! ----------
+regenYarn();
 openDB().then(loadAll).then(all => { cats = all || []; renderAll(); })
   .catch(() => { renderAll(); toast("Can't save photos in this browser (private mode?)", 4000); });
 </script>
