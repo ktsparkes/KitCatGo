@@ -10,7 +10,8 @@ Play: https://ktsparkes.github.io/KitCatGo/
 - 🗺️ See all your cats on the map
 - 🧶 Catch wild cats on the map: walk close, tap one, swipe the yarn
 - 👣 Walk mode: tap the map to move, no walking needed
-- 📖 Fill the Catdex: collect all 12 coat types
+- 🏠 Cat Home: feed 🐟, play 🪶 and pet ✋ your cats to earn hearts
+- 📖 Fill the Catdex: 12 coat types + 40 breeds to collect
 - ⭐ Earn XP and level up. Tap "I saw them again!" for bonus XP
 
 Photos are saved on your phone only (in your browser).

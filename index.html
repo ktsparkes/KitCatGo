@@ -100,7 +100,7 @@
   label.lbl { display: block; font-weight: 700; margin: 14px 0 6px; }
   .field { width: 100%; padding: 12px; border-radius: 12px; border: 2px solid var(--line); background: var(--bg); color: var(--ink); }
   .row { display: flex; gap: 8px; align-items: center; }
-  .chips { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
+  .chips { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; max-height: 300px; overflow-y: auto; padding: 2px; }
   .chip { background: var(--bg); border: 2px solid var(--line); border-radius: 12px; padding: 4px 2px 6px;
     text-align: center; font-size: 11px; font-weight: 600; color: var(--ink); }
   .chip .catPic { width: 44px; height: 44px; border-radius: 50%; object-fit: cover; display: block; margin: 2px auto 3px; }
@@ -165,6 +165,40 @@
   .wobble { animation: wobble .5s ease; }
   @keyframes wobble { 25% { transform: rotate(-20deg); } 75% { transform: rotate(20deg); } }
 
+  /* Cat Home */
+  #room { position: relative; height: 340px; border-radius: 20px; overflow: hidden; margin-bottom: 4px;
+    background: linear-gradient(#ffe9d6 0 58%, #d9a877 58% 100%); border: 2px solid var(--line); }
+  #room::before { content: '🪟'; position: absolute; top: 18px; left: 24px; font-size: 54px; opacity: .9; }
+  #room::after { content: '🪴'; position: absolute; top: 96px; right: 18px; font-size: 44px; }
+  #room .rug { position: absolute; left: 50%; bottom: 20px; width: 70%; height: 60px; transform: translateX(-50%);
+    border-radius: 50%; background: #c86b5a; opacity: .5; }
+  #room .emptyRoom { position: absolute; inset: 0; display: grid; place-items: center; text-align: center; color: #7a5a44; padding: 20px; font-weight: 600; }
+  .roomCat { position: absolute; width: 64px; text-align: center; transition: left 2.5s ease-in-out, top 2.5s ease-in-out; cursor: pointer; z-index: 2; }
+  .roomCat img { width: 60px; height: 60px; border-radius: 50%; object-fit: cover; border: 3px solid #fff; box-shadow: 0 4px 10px rgba(0,0,0,.25); animation: bob 1.8s ease-in-out infinite; }
+  .roomCat .bubble { position: absolute; top: -14px; right: -6px; font-size: 20px; }
+  .roomCat .nm { font-size: 11px; font-weight: 700; color: #4a3326; background: rgba(255,255,255,.8); border-radius: 8px; padding: 0 4px;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .careRow { display: flex; gap: 12px; align-items: center; background: var(--card); border: 2px solid var(--line); border-radius: 16px;
+    padding: 10px; margin-top: 10px; cursor: pointer; }
+  .careRow img { width: 56px; height: 56px; border-radius: 50%; object-fit: cover; flex: none; }
+  .careRow .grow { flex: 1; min-width: 0; }
+  .careRow .nm { font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .meter { display: flex; align-items: center; gap: 6px; font-size: 13px; margin-top: 3px; }
+  .meter .bar { flex: 1; height: 8px; background: var(--line); border-radius: 99px; overflow: hidden; }
+  .meter .fill { height: 100%; border-radius: 99px; transition: width .4s; }
+  .hearts { font-size: 13px; letter-spacing: 1px; }
+  .careHero { position: relative; width: 200px; height: 200px; margin: 4px auto 10px; }
+  .careHero img.pic { width: 200px; height: 200px; border-radius: 50%; object-fit: cover; border: 5px solid var(--line); }
+  .careHero.jump img.pic { animation: jump .5s ease; }
+  @keyframes jump { 40% { transform: translateY(-24px) scale(1.05); } }
+  .careBtns { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 14px; }
+  .careBtns button { border: 0; border-radius: 16px; padding: 14px 4px; font-size: 15px; font-weight: 700; background: var(--bg);
+    color: var(--ink); border: 2px solid var(--line); }
+  .careBtns button span { display: block; font-size: 30px; }
+  .floaty { position: fixed; z-index: 5000; font-size: 30px; pointer-events: none; animation: floaty 1.2s ease-out forwards; }
+  @keyframes floaty { to { transform: translateY(-90px) scale(1.4); opacity: 0; } }
+  #feather { position: absolute; font-size: 44px; cursor: pointer; transition: left .35s ease, top .35s ease; z-index: 3; }
+
   #toast { position: fixed; left: 50%; top: calc(70px + env(safe-area-inset-top)); transform: translateX(-50%);
     z-index: 4000; background: var(--ink); color: var(--bg); padding: 10px 16px; border-radius: 12px; font-weight: 600;
     opacity: 0; transition: opacity .3s; pointer-events: none; max-width: calc(100% - 32px); text-align: center; }
@@ -194,6 +228,14 @@
   </div>
 </div>
 
+<div class="view" id="homeView">
+  <h2>Cat Home</h2>
+  <div class="sub" id="homeSub"></div>
+  <div id="room"></div>
+  <button class="btn" id="feedAll">🐟 Feed everyone</button>
+  <div id="careList"></div>
+</div>
+
 <div class="view" id="dexView">
   <h2>Catdex</h2>
   <div class="sub" id="dexSub"></div>
@@ -206,6 +248,7 @@
 <nav id="nav">
   <button data-tab="col" class="on"><span>🖼️</span>My Cats</button>
   <button data-tab="map"><span>🗺️</span>Map</button>
+  <button data-tab="home"><span>🏠</span>Cat Home</button>
   <button data-tab="dex"><span>📖</span>Catdex</button>
 </nav>
 
@@ -217,7 +260,7 @@
     <input class="field" id="addName" placeholder="What's this cat called?" maxlength="40">
     <button class="smallBtn" id="dice" title="Random name">🎲</button>
   </div>
-  <label class="lbl">Coat type</label>
+  <label class="lbl">Coat or breed <small style="font-weight:400;color:var(--muted)">(not sure? pick the closest colour)</small></label>
   <div class="chips" id="coatChips"></div>
   <label class="lbl" for="addNote">Notes</label>
   <textarea class="field" id="addNote" rows="2" placeholder="Where was it? Was it friendly?"></textarea>
@@ -225,6 +268,9 @@
   <button class="btn" id="saveBtn">Add to collection ✨</button>
   <button class="btn ghost" id="cancelBtn">Cancel</button>
 </div></div>
+
+<!-- Care sheet -->
+<div class="sheet" id="careSheet"><div class="sheetBox" id="careBox"></div></div>
 
 <!-- Cat detail sheet -->
 <div class="sheet" id="detailSheet"><div class="sheetBox" id="detailBox"></div></div>
@@ -247,7 +293,7 @@
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
 <script>
-// ---------- Coat types (the Catdex) ----------
+// ---------- Coat types & breeds (the Catdex) ----------
 const RARITY = {
   common: 'var(--common)', uncommon: 'var(--uncommon)', rare: 'var(--rare)', epic: 'var(--epic)', legendary: 'var(--legendary)'
 };
@@ -264,6 +310,47 @@ const COATS = [
   { id: 'fluffy',   name: 'Super Fluffy',  r: 'rare',      fur: '#d7ccc8', acc: '#a1887f', pat: 'fluff',   eye: '#ff9800' },
   { id: 'spotty',   name: 'Spotty',        r: 'epic',      fur: '#e6b35c', acc: '#5d3a1a', pat: 'spots',   eye: '#9ccc65' },
   { id: 'mystery',  name: 'Mystery',       r: 'legendary', fur: '#3a1c71', acc: '#f5d0ff', pat: 'spots',   eye: '#ffe082' },
+  // Breeds
+  { id: 'british',    name: 'British Shorthair',  r: 'uncommon' },
+  { id: 'persian',    name: 'Persian',            r: 'uncommon' },
+  { id: 'ragdoll',    name: 'Ragdoll',            r: 'uncommon' },
+  { id: 'russian',    name: 'Russian Blue',       r: 'uncommon' },
+  { id: 'burmese',    name: 'Burmese',            r: 'uncommon' },
+  { id: 'american',   name: 'American Shorthair', r: 'uncommon' },
+  { id: 'exotic',     name: 'Exotic Shorthair',   r: 'uncommon' },
+  { id: 'bombay',     name: 'Bombay',             r: 'uncommon' },
+  { id: 'chartreux',  name: 'Chartreux',          r: 'uncommon' },
+  { id: 'himalayan',  name: 'Himalayan',          r: 'uncommon' },
+  { id: 'birman',     name: 'Birman',             r: 'uncommon' },
+  { id: 'norwegian',  name: 'Norwegian Forest',   r: 'uncommon' },
+  { id: 'siberian',   name: 'Siberian',           r: 'uncommon' },
+  { id: 'fold',       name: 'Scottish Fold',      r: 'rare' },
+  { id: 'abyssinian', name: 'Abyssinian',         r: 'rare' },
+  { id: 'devon',      name: 'Devon Rex',          r: 'rare' },
+  { id: 'cornish',    name: 'Cornish Rex',        r: 'rare' },
+  { id: 'oriental',   name: 'Oriental Shorthair', r: 'rare' },
+  { id: 'angora',     name: 'Turkish Angora',     r: 'rare' },
+  { id: 'van',        name: 'Turkish Van',        r: 'rare' },
+  { id: 'manx',       name: 'Manx',               r: 'rare' },
+  { id: 'mau',        name: 'Egyptian Mau',       r: 'rare' },
+  { id: 'tonkinese',  name: 'Tonkinese',          r: 'rare' },
+  { id: 'somali',     name: 'Somali',             r: 'rare' },
+  { id: 'balinese',   name: 'Balinese',           r: 'rare' },
+  { id: 'korat',      name: 'Korat',              r: 'rare' },
+  { id: 'havana',     name: 'Havana Brown',       r: 'rare' },
+  { id: 'nebelung',   name: 'Nebelung',           r: 'rare' },
+  { id: 'snowshoe',   name: 'Snowshoe',           r: 'rare' },
+  { id: 'sphynx',     name: 'Sphynx',             r: 'epic' },
+  { id: 'savannah',   name: 'Savannah',           r: 'epic' },
+  { id: 'munchkin',   name: 'Munchkin',           r: 'epic' },
+  { id: 'ocicat',     name: 'Ocicat',             r: 'epic' },
+  { id: 'selkirk',    name: 'Selkirk Rex',        r: 'epic' },
+  { id: 'laperm',     name: 'LaPerm',             r: 'epic' },
+  { id: 'curl',       name: 'American Curl',      r: 'epic' },
+  { id: 'bobtail',    name: 'Japanese Bobtail',   r: 'epic' },
+  { id: 'singapura',  name: 'Singapura',          r: 'epic' },
+  { id: 'toyger',     name: 'Toyger',             r: 'epic' },
+  { id: 'lykoi',      name: 'Lykoi',              r: 'legendary' },
 ];
 const coatById = id => COATS.find(c => c.id === id) || COATS[COATS.length - 1];
 const NAMES = ['Mochi','Biscuit','Luna','Pickle','Noodle','Pumpkin','Waffles','Tofu','Muffin','Ziggy','Pepper','Olive',
@@ -298,12 +385,12 @@ const putCat = c => tx('readwrite', s => s.put(c));
 const delCat = id => tx('readwrite', s => s.delete(id));
 
 // ---------- XP & levels ----------
-const XP_NEW_CAT = 100, XP_WILD_CAT = 50, XP_NEW_COAT = 300, XP_SEEN_AGAIN = 25;
+const XP_CARE = 5, XP_NEW_CAT = 100, XP_WILD_CAT = 50, XP_NEW_COAT = 300, XP_SEEN_AGAIN = 25;
 const levelOf = xp => Math.floor(Math.sqrt(xp / 250)) + 1;
 const xpFor = lvl => (lvl - 1) ** 2 * 250;
 function totalXP() {
   const coats = new Set(cats.map(c => c.coat));
-  return cats.reduce((s, c) => s + (c.wild ? XP_WILD_CAT : XP_NEW_CAT) + (c.seen - 1) * XP_SEEN_AGAIN, 0) + coats.size * XP_NEW_COAT;
+  return cats.reduce((s, c) => s + (c.wild ? XP_WILD_CAT : XP_NEW_CAT) + (c.seen - 1) * XP_SEEN_AGAIN + (c.love || 0) * XP_CARE, 0) + coats.size * XP_NEW_COAT;
 }
 function renderHUD() {
   const xp = totalXP(), lvl = levelOf(xp), lo = xpFor(lvl), hi = xpFor(lvl + 1);
@@ -374,7 +461,7 @@ document.getElementById('dice').onclick = () => document.getElementById('addName
 document.getElementById('cancelBtn').onclick = () => { draft = null; document.getElementById('addSheet').classList.remove('open'); };
 
 document.getElementById('saveBtn').onclick = async () => {
-  if (!draft.coat) { toast('Pick a coat type first 🎨'); return; }
+  if (!draft.coat) { toast('Pick a coat or breed first 🎨'); return; }
   const coatIsNew = !cats.some(c => c.coat === draft.coat);
   const lvlBefore = levelOf(totalXP());
   const cat = {
@@ -464,7 +551,7 @@ function renderDex() {
   cats.forEach(c => counts[c.coat] = (counts[c.coat] || 0) + 1);
   const found = Object.keys(counts).length;
   document.getElementById('dexSub').textContent = found === COATS.length
-    ? `🏆 You found every coat type! Legend.` : `${found} / ${COATS.length} coat types found`;
+    ? `🏆 You found every single cat! Legend.` : `${found} / ${COATS.length} coats & breeds found`;
   document.getElementById('dexGrid').innerHTML = COATS.map(c => {
     const n = counts[c.id] || 0;
     return `<div class="dexCard ${n ? '' : 'unseen'}" style="${n ? `border-color:${RARITY[c.r]}` : ''}">
@@ -691,16 +778,169 @@ async function finishThrow(caught) {
   ]);
 }
 
+// ---------- Cat Home: feed, play, pet ----------
+const DECAY_PER_HOUR = 4;          // meters drop from 100 to 0 in about a day
+const clamp = v => Math.max(0, Math.min(100, v));
+function stat(c, key) {           // key: 'full' or 'joy'
+  const v = c[key] ?? 70, at = c[key + 'At'] ?? c.date;
+  return clamp(v - (Date.now() - at) / 3600000 * DECAY_PER_HOUR);
+}
+function bump(c, key, amt) { c[key] = clamp(stat(c, key) + amt); c[key + 'At'] = Date.now(); }
+const heartsOf = c => Math.min(5, Math.floor((c.love || 0) / 10));
+const heartStr = c => '❤️'.repeat(heartsOf(c)) + '🤍'.repeat(5 - heartsOf(c));
+function mood(c) {
+  const f = stat(c, 'full'), j = stat(c, 'joy');
+  if (f < 30) return { e: '🍽️', t: 'Hungry!' };
+  if (j < 30) return { e: '🥺', t: 'Wants to play' };
+  if (f > 70 && j > 70) return { e: '💖', t: 'So happy' };
+  return { e: '', t: 'Content' };
+}
+function meterHTML(label, v, color) {
+  return `<div class="meter">${label}<div class="bar"><div class="fill" style="width:${v}%;background:${color}"></div></div></div>`;
+}
+function floaty(emoji, el) {
+  const r = el.getBoundingClientRect();
+  for (let i = 0; i < 3; i++) {
+    const f = document.createElement('div');
+    f.className = 'floaty'; f.textContent = emoji;
+    f.style.left = (r.left + r.width / 2 - 15 + (i - 1) * 28) + 'px';
+    f.style.top = (r.top + r.height / 3) + 'px';
+    f.style.animationDelay = (i * 0.12) + 's';
+    document.body.appendChild(f); setTimeout(() => f.remove(), 1600);
+  }
+}
+async function care(c, key, amt, emoji, el, msg) {
+  const before = stat(c, key);
+  const lvlBefore = levelOf(totalXP()), heartsBefore = heartsOf(c);
+  bump(c, key, amt);
+  if (before < 95) c.love = (c.love || 0) + 1;   // no love points for spamming a full cat
+  await putCat(c);
+  if (el) floaty(emoji, el);
+  if (heartsOf(c) > heartsBefore) toast(`💖 ${c.name} loves you more! (${heartsOf(c)}/5 hearts)`, 3000);
+  else if (before >= 95) toast(`${c.name} is already ${key === 'full' ? 'full' : 'super happy'}! 😸`);
+  else if (msg) toast(msg);
+  if (levelOf(totalXP()) > lvlBefore) toast(`🎉 Level up! You're level ${levelOf(totalXP())}`, 3000);
+  renderHUD(); renderHome();
+}
+
+let roomTimer = null;
+function renderHome() {
+  const room = document.getElementById('room');
+  const list = cats.slice().sort((a, b) => (stat(a, 'full') + stat(a, 'joy')) - (stat(b, 'full') + stat(b, 'joy')));
+  const hungry = cats.filter(c => stat(c, 'full') < 30).length;
+  document.getElementById('homeSub').textContent = !cats.length ? '' :
+    hungry ? `🍽️ ${hungry} hungry cat${hungry === 1 ? '' : 's'}! Tap a cat to look after it.` : '😸 Everyone is happy. Tap a cat to play!';
+  document.getElementById('feedAll').style.display = cats.length ? '' : 'none';
+  if (!cats.length) {
+    room.innerHTML = `<div class="rug"></div><div class="emptyRoom">Your cat home is empty!<br>Snap a photo 📷 or catch wild cats 🗺️ and they'll move in here.</div>`;
+  } else {
+    const shown = cats.slice(-12);
+    const existing = new Set([...room.querySelectorAll('.roomCat')].map(e => e.dataset.id));
+    const same = shown.length === existing.size && shown.every(c => existing.has(c.id));
+    if (!same) room.innerHTML = '<div class="rug"></div>' + shown.map(c =>
+      `<div class="roomCat" data-id="${c.id}" data-slot="${shown.indexOf(c)}" style="${slotPos(shown.indexOf(c))}">
+        <span class="bubble"></span><img src="${c.thumb}" alt=""><div class="nm">${esc(c.name)}</div></div>`).join('');
+    shown.forEach(c => { const b = room.querySelector(`.roomCat[data-id="${c.id}"] .bubble`); if (b) b.textContent = mood(c).e; });
+  }
+  document.getElementById('careList').innerHTML = list.map(c => `
+    <div class="careRow" data-id="${c.id}"><img src="${c.thumb}" alt="">
+      <div class="grow"><div class="nm">${esc(c.name)} ${mood(c).e}</div>
+        ${meterHTML('🐟', stat(c, 'full'), '#ff8a5c')}${meterHTML('😺', stat(c, 'joy'), '#a45cf0')}
+        <div class="hearts">${heartStr(c)}</div></div></div>`).join('');
+}
+// Each cat gets its own spot (4 per row, bottom row first) and wiggles around it
+function slotPos(i, jitter = 0) {
+  const col = i % 4, row = Math.floor(i / 4);
+  const left = 4 + col * 24 + (Math.random() - .5) * jitter, top = [66, 42, 18][row] + (Math.random() - .5) * jitter;
+  return `left:${left}%;top:${top}%`;
+}
+function wanderRoom() {
+  document.querySelectorAll('#room .roomCat').forEach(el => {
+    if (Math.random() < 0.5) el.style.cssText = slotPos(+el.dataset.slot, 8);
+  });
+}
+document.getElementById('room').onclick = e => { const el = e.target.closest('.roomCat'); if (el) openCare(el.dataset.id); };
+document.getElementById('careList').onclick = e => { const el = e.target.closest('.careRow'); if (el) openCare(el.dataset.id); };
+document.getElementById('feedAll').onclick = async e => {
+  let n = 0;
+  for (const c of cats) { const before = stat(c, 'full'); bump(c, 'full', 40); if (before < 95) { c.love = (c.love || 0) + 1; n++; } await putCat(c); }
+  floaty('🐟', e.currentTarget);
+  toast(n ? `Fed ${n} cat${n === 1 ? '' : 's'}! Om nom nom 🐟` : 'Everyone is already full! 😸');
+  renderHUD(); renderHome();
+};
+
+let careCat = null;
+function openCare(id) {
+  const c = cats.find(x => x.id === id); if (!c) return;
+  careCat = c;
+  const box = document.getElementById('careBox');
+  const draw = () => {
+    const m = mood(c);
+    box.innerHTML = `
+      <div class="careHero" id="careHero"><img class="pic" src="${c.thumb}" alt=""></div>
+      <h2 style="text-align:center;margin:0">${esc(c.name)}</h2>
+      <div style="text-align:center" class="meta">${coatById(c.coat).name} · ${m.t} ${m.e}</div>
+      <div style="text-align:center;font-size:20px;margin:6px 0">${heartStr(c)}</div>
+      ${meterHTML('🐟 Food', stat(c, 'full'), '#ff8a5c')}
+      ${meterHTML('😺 Fun', stat(c, 'joy'), '#a45cf0')}
+      <div class="careBtns">
+        <button id="cFeed"><span>🐟</span>Feed</button>
+        <button id="cPlay"><span>🪶</span>Play</button>
+        <button id="cPet"><span>✋</span>Pet</button>
+      </div>
+      <button class="btn ghost" id="cClose">Done</button>`;
+    const hero = document.getElementById('careHero');
+    document.getElementById('cFeed').onclick = async () => {
+      const food = ['🐟', '🍗', '🥛', '🍤'][Math.floor(Math.random() * 4)];
+      await care(c, 'full', 35, food, hero, `${c.name} munched it up! ${food}`); draw();
+    };
+    document.getElementById('cPet').onclick = async () => {
+      hero.classList.remove('jump'); void hero.offsetWidth; hero.classList.add('jump');
+      await care(c, 'joy', 15, '💕', hero, `Purrrrr... ${c.name} loves that 💕`); draw();
+    };
+    document.getElementById('cPlay').onclick = () => playGame(c, hero, draw);
+    document.getElementById('cClose').onclick = closeCare;
+  };
+  draw();
+  document.getElementById('careSheet').classList.add('open');
+}
+function closeCare() { document.getElementById('careSheet').classList.remove('open'); careCat = null; }
+
+// Play: tap the feather 3 times before it gets away
+function playGame(c, hero, done) {
+  let hits = 0, left = 8;
+  const f = document.createElement('div');
+  f.id = 'feather'; f.textContent = '🪶';
+  hero.appendChild(f);
+  const move = () => { f.style.left = (Math.random() * 150) + 'px'; f.style.top = (Math.random() * 150) + 'px'; };
+  move();
+  toast(`Tap the feather 3 times! 🪶`, 1800);
+  const timer = setInterval(() => { if (--left <= 0) finish(false); else move(); }, 900);
+  f.onclick = e => {
+    e.stopPropagation(); hits++;
+    hero.classList.remove('jump'); void hero.offsetWidth; hero.classList.add('jump');
+    if (hits >= 3) finish(true); else move();
+  };
+  async function finish(won) {
+    clearInterval(timer); f.remove();
+    if (won) await care(c, 'joy', 35, '🧶', hero, `${c.name} caught the feather! So much fun 🎉`);
+    else { await care(c, 'joy', 10, '🪶', hero, `The feather got away! ${c.name} still had fun`); }
+    done();
+  }
+}
+
 // ---------- Tabs ----------
 function showTab(t) {
   document.querySelectorAll('.view').forEach(v => v.classList.toggle('on', v.id === t + 'View'));
   document.querySelectorAll('#nav button').forEach(b => b.classList.toggle('on', b.dataset.tab === t));
   document.body.classList.toggle('onMap', t === 'map');
+  clearInterval(roomTimer);
+  if (t === 'home') { renderHome(); roomTimer = setInterval(() => { wanderRoom(); renderHome(); }, 3000); }
   if (t === 'map') { if (!map) initMap(); map.invalidateSize(); renderMap(); regenYarn(); }
 }
 document.querySelectorAll('#nav button').forEach(b => b.onclick = () => showTab(b.dataset.tab));
 
-function renderAll() { renderHUD(); renderCollection(); renderDex(); renderMap(); }
+function renderAll() { renderHUD(); renderCollection(); renderDex(); renderMap(); renderHome(); }
 
 // ---------- Go! ----------
 regenYarn();
